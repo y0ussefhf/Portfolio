@@ -1,14 +1,14 @@
 {
   "name": "youssef-portfolio",
   "private": true,
-  "homepage": "https://y0ussefhf.github.io/portfolio",
+  "homepage": "https://y0ussefhf.github.io/Portfolio/",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -d dist",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
