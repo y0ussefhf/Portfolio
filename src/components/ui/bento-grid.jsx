@@ -1,3 +1,4 @@
+import React from 'react';
 import { cn } from "../../lib/utils"
 
 export const BentoGrid = ({
@@ -5,13 +6,13 @@ export const BentoGrid = ({
   children
 }) => {
   return (
-    (<div
+    <div
       className={cn(
-        "grid md:auto-rows-[18rem] grid-cols-1 md:grid-cols-3 gap-4 max-w-7xl mx-auto ",
+        "grid md:auto-rows-[18rem] grid-cols-1 md:grid-cols-3 gap-4 max-w-7xl mx-auto",
         className
       )}>
       {children}
-    </div>)
+    </div>
   );
 };
 
@@ -20,26 +21,42 @@ export const BentoGridItem = ({
   title,
   description,
   header,
-  icon
+  icon,
+  href
 }) => {
+  const ContentWrapper = ({ children }) => 
+    href ? (
+      <a href={href} target="_blank" rel="noopener noreferrer" className="block h-full">
+        {children}
+      </a>
+    ) : (
+      <>{children}</>
+    );
+
   return (
-    (<div
+    <div
       className={cn(
-        "row-span-1 rounded-3xl group/bento hover:shadow-xl transition duration-200 shadow-input dark:shadow-none p-4 dark:bg-black dark:border-white/[0.2] bg-zinc-100 border border-transparent justify-between flex flex-col space-y-4",
+        "row-span-1 rounded-3xl group/bento hover:shadow-xl transition duration-200 shadow-input dark:shadow-none p-4 dark:bg-black dark:border-white/[0.2] bg-zinc-100 border border-transparent flex flex-col",
         className
       )}>
-      {header}
-      <div className="group-hover/bento:translate-x-2 transition duration-200">
-        {icon}
-        <div
-          className="font-sans font-bold text-neutral-600 dark:text-neutral-200 mb-2 mt-2">
-          {title}
+      <ContentWrapper>
+        <div className="flex flex-col h-full">
+          <div className="flex-grow overflow-hidden">
+            {header}
+          </div>
+          <div className="mt-4">
+            <div className="flex items-center">
+              {icon && <div className="mr-2">{icon}</div>}
+              <div className="font-sans font-bold text-neutral-600 dark:text-neutral-200">
+                {title}
+              </div>
+            </div>
+            <div className="font-sans font-normal text-neutral-600 text-xs dark:text-neutral-300 mt-2">
+              {description}
+            </div>
+          </div>
         </div>
-        <div
-          className="font-sans font-normal text-neutral-600 text-xs dark:text-neutral-300">
-          {description}
-        </div>
-      </div>
-    </div>)
+      </ContentWrapper>
+    </div>
   );
 };

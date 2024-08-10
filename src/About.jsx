@@ -67,7 +67,7 @@ export default function About() {
                     </ul>
                 </div>
             </div>
-            <div className="hidden lg:flex justify-end w-2/5 h-2/5 self-end"><img className="lg:w-full" src="src/assets/AboutPicture.png" /></div>
+            <div className="hidden lg:flex justify-end w-2/5 h-2/5 self-end"><img className="lg:w-full" src="assets/AboutPicture.png" /></div>
         </div>
     )
 }

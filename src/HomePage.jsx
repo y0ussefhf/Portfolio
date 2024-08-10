@@ -12,52 +12,13 @@ export default function HomePage() {
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
   function handleClick(index) {
-    console.log(index);
     setSelected(data.sections[index].name);
     setSelectedIndex(index);
-    console.log(index)
-    console.log(data.sections[index].projects);
   }
   useEffect(() => {
     setIsVisible(true); // Trigger the animation on component mount
   }, []);
-  const Categories = [
-    {
-      smallname: "ARCH",
-      name: "VIZ",
-      image: "bg-[url('src/assets/1.jpg')]"
-    },
-    {
-      smallname: "INTERIOR",
-      name: "DESIGN",
-      image: "bg-[url('src/assets/2.jpg')]"
-    },
-    {
-      smallname: "ARCHITECTURAL",
-      name: "DESIGN",
-      image: "bg-[url('src/assets/3.jpg')]"
-    },
-    {
-      smallname: "AUTOMOTIVE",
-      name: "DESIGN",
-      image: "bg-[url('src/assets/4.jpg')]"
-    },
-    {
-      smallname: "ENVIRONMENT",
-      name: "ART",
-      image: "bg-[url('src/assets/5.jpg')]"
-    },
-    {
-      smallname: "CHARACTER",
-      name: "ART",
-      image: "bg-[url('src/assets/6.jpg')]"
-    },
-    {
-      smallname: "OTHER",
-      name: "ART",
-      image: "bg-[url('src/assets/7.jpg')]"
-    }
-  ];
+  const Categories = data.categories;
   return(
     <div>
       {Selected == "Home" && 

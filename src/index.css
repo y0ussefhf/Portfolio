@@ -94,7 +94,7 @@
   left: 0;
   right: 0;
   background-repeat: repeat;
-  background-image: url("src/assets/paperTex.jpg");
+  background-image: url("/src/assets/paperTex.jpg");
   pointer-events: none;
   mix-blend-mode: overlay;
   z-index: 50;
@@ -108,7 +108,7 @@
   left: 0;
   right: 0;
   background-repeat: repeat;
-  background-image: url("src/assets/bg.jpg");
+  background-image: url("/src/assets/bg.jpg");
   pointer-events: none;
   z-index: -1;
 }
