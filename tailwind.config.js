@@ -77,19 +77,19 @@ module.exports = {
   function ({ addUtilities }) {
     addUtilities({
       '.text-stroke': {
-        '-webkit-text-stroke': '1px #000',
+        '-webkit-text-stroke': '1px #1a1a1a',
       },
       '.text-stroke-sm': {
-        '-webkit-text-stroke': '0.5px #000',
+        '-webkit-text-stroke': '0.5px #1a1a1a',
       },
       '.text-stroke-lg': {
-        '-webkit-text-stroke': '2px #000',
+        '-webkit-text-stroke': '2px #1a1a1a',
       },
       '.text-stroke-white': {
         '-webkit-text-stroke': '2px #fff',
       },
       '.text-stroke-black': {
-        '-webkit-text-stroke': '2px #000',
+        '-webkit-text-stroke': '2px #1a1a1a',
       },
     });
   },],
