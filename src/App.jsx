@@ -21,7 +21,7 @@ function App() {
         <h1 onClick={() => handleClick("Contact")} className={`${Selected == "Contact" ? "font-bold font-[NexaHeavy]" : "font-bold font-[NexaExtraLight]"} hover:cursor-pointer`}>CONTACT</h1>
       </div>
       <div className="flex-grow scrollbar-hide overflow-y-auto">
-        {Selected == "Home" && <HomePage />}
+        {(Selected == "Home" || Selected == "projectsSection") && <HomePage Selected={Selected} setSelected={setSelected} />}
         {Selected == "About" && <About />}
         {Selected == "Contact" && <Contact />}
       </div>

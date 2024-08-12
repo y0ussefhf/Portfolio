@@ -12,7 +12,7 @@ export default function About() {
       setIsVisible(true);
     }, []);
     return(
-        <div className={`overflow-y-hidden transition-opacity duration-1000 ease-in-out ${isVisible ? 'opacity-100' : 'opacity-0'} flex flex-col lg:flex-row pb-52 h-full w-full justify-center items-center`}>
+        <div className={`overflow-y-hidden transition-opacity duration-1000 ease-in-out ${isVisible ? 'opacity-100' : 'opacity-0'} flex flex-col lg:flex-row pb-36 h-full w-full justify-center items-center`}>
             <svg width="0" height="0">
                 <linearGradient id="blue-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
                     <stop stopColor="#00a3ff" offset="0%" />

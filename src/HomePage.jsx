@@ -6,13 +6,12 @@ import "./index.css";
 import {data} from "./assets/data.js";
 
 
-export default function HomePage() {
+export default function HomePage({Selected,setSelected}) {
   const [isVisible, setIsVisible] = useState(false);
-  const [Selected, setSelected] = useState("Home");
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
   function handleClick(index) {
-    setSelected(data.sections[index].name);
+    setSelected("projectsSection");
     setSelectedIndex(index);
   }
   useEffect(() => {
@@ -32,7 +31,7 @@ export default function HomePage() {
               <div className="lg:mr-40">
               <h1 className="font-[IntegralMediumRegular] font-bold mr-28 text-4xl border-b-2 pb-4 px-1 border-black lg:text-7xl">YOUSSEF HESHAM</h1>
               <p className="font-[NexaExtraLight] mt-2 font-bold text-xl">
-                  An Architect and 3D artist Specialising in Archviz and Character art, combined with a decade of experience in 3D art. My journey through the world of 3D has taken me from animation to character art to automotive design all the way to archviz.
+                  An architect and 3D artist specialising in archviz and character art, combined with a decade of experience in 3D art. My journey through the world of 3D has taken me from animation to character art to automotive design all the way to archviz.
               </p>
               <p className="font-[NexaExtraLight] pt-2 text-xl">
                   Currently Based in Cairo, Egypt.

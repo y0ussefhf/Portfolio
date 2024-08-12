@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from 'react'
-
+import {Image} from "@nextui-org/image";
 export default function About() {
     const [isVisible, setIsVisible] = useState(false);
     useEffect(() => {
@@ -10,6 +10,14 @@ export default function About() {
         <div className={`transition-opacity duration-1000 ease-in-out ${isVisible ? 'opacity-100' : 'opacity-0'} flex flex-col justify-center lg:flex-row`}>
             <div className="pl-8 pt-6 pr-8 lg:pr-0 lg:pl-20 lg:pt-12 lg:w-3/4">
                 <div>
+                <div>
+                    <h1 className="border-b-2 border-black font-[NexaHeavy] text-2xl pb-2">ABOUT ME</h1>
+                    <div className="flex justify-between pt-2 flex-col lg:flex-row"></div>
+                    <div className="font-bold text-lg">
+                           Born and raised in Cairo, Egypt, I am an Architectural Engineer with a deep passion for art and design. My journey with art began at the age of 9, and I've dedicated the past decade to honing my skills in both painting and 3D art, trying to find a balance between engineering and artistic vision. Alongside my professional interests, I am an avid fan of music, gaming, cinema, car culture, bodybuilding and anime, all of which inspire and influence many of my creative projects.
+                           <div className="flex justify-between pt-2 flex-col lg:flex-row"></div>
+                        </div>
+                </div>
                     <h1 className="border-b-2 border-black text-2xl font-[NexaHeavy] pb-2">EXPERIENCE</h1>
                     <div className="flex justify-between pt-2 flex-col lg:flex-row">
                         <div className="font-bold text-lg">
@@ -29,14 +37,14 @@ export default function About() {
                     <h1 className="border-b-2 border-black font-[NexaHeavy] text-2xl py-2">EDUCATION</h1>
                     <div className="flex flex-col lg:flex-row justify-between pt-2">
                         <div className="text-lg font-bold">
-                            Arab Academy for Science and Technology
+                            Arab Academy for Science and Technology - College of Engineering
                         </div>
                         <div className="text-zinc-700 lg:self-center font-semibold">
-                            2018 - 2023
+                            September 2018 - July 2023
                         </div>
                     </div>
                     <div className="pb-4 font-bold">
-                        B.Sc. of Architecture
+                        B.Sc. of Architectural Engineering & Environmental Design
                     </div>
                 </div>
                 <div>
@@ -52,22 +60,9 @@ export default function About() {
                         <li className="pl-4">Matte Painting</li>
                     </ul>
                 </div>
-                <div>
-                    <h1 className="border-b-2 border-black font-[NexaHeavy] text-2xl pb-2">PROJECTS</h1>
-                    <ul className="pl-12 list-disc pt-2 font-bold">
-                        <li className="pl-4">Culture Center - Sayeda Eisha, Cairo, Egypt.</li>
-                        <li className="pl-4">Transport Hub – Marsa Matrouh, Egypt</li>
-                        <li className="pl-4">Life – Qarun Lake Shore, Faiyum, Egypt</li>
-                        <li className="pl-4">Coworking hub – Heliopolis, Cairo, Egypt</li>
-                        <li className="pl-4">Housing – Sherouk, Cairo, Egypt</li>
-                        <li className="pl-4">Park – Sheraton, Cairo, Egypt</li>
-                        <li className="pl-4">Scandinavian Bedroom</li>
-                        <li className="pl-4">Art Deco Bedroom</li>
-                        <li className="pl-4">Wood Cabin</li>
-                    </ul>
-                </div>
+                
             </div>
-            <div className="hidden lg:flex justify-end w-2/5 h-2/5 self-end"><img className="lg:w-full" src="assets/AboutPicture.png" /></div>
+            <div className="hidden pr-20 lg:flex justify-end w-2/5 h-2/5 self-end"><Image isBlurred shadow="lg" className="lg:w-full" src="assets/AboutPicture.png" /></div>
         </div>
     )
 }
