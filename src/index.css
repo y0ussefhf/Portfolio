@@ -18,11 +18,11 @@
 
 @font-face {
     font-family: NexaExtraLight;
-    src: url(./assets/nexa/Nexa-ExtraLight.ttf);
+    src: url(./assets/Outfit/static/Outfit-Thin.ttf);
 }
 @font-face {
     font-family: NexaHeavy;
-    src: url(./assets/nexa/Nexa-Heavy.ttf);
+    src: url(./assets/Outfit/static/Outfit-Bold.ttf);
 }
 @font-face {
     font-family: IntegralMediumRegular;
