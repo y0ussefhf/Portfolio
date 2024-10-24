@@ -29,6 +29,12 @@
     src: url(./assets/Integral-CF-Font-Family/Fontspring-DEMO-integralcf-medium.otf);
 }
 
+.fade-out {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 2s, opacity 2s linear;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

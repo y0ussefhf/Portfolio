@@ -62,6 +62,14 @@ export const data = {
                     multipleImages: false
                 },
                 {
+                    name: "Bedroom 4",
+                    description: "Design and Visualisation",
+                    image: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/ca8d91205733411.66c030e6655a7.jpg",
+                    link: "https://www.behance.net/gallery/205733411/Bedroom-4",
+                    className: "lg:row-span-2",
+                    multipleImages: false
+                },
+                {
                     name: "Cozy Cabin",
                     description: "Design and Visualisation",
                     image: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/7d69fb199717749.66565a0b20f93.jpg",
@@ -126,7 +134,14 @@ export const data = {
         {
             name: "INTERIOR DESIGN",
             projects: [
-                
+                {
+                    name: "Bedroom 4",
+                    description: "Design and Visualisation",
+                    image: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/ca8d91205733411.66c030e6655a7.jpg",
+                    link: "https://www.behance.net/gallery/205733411/Bedroom-4",
+                    className: "lg:row-span-2",
+                    multipleImages: false
+                },
                 {
                     name: "Cozy Cabin",
                     description: "Design and Visualisation",
