@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 *{
-    font-family: 'NexaExtraLight', sans-serif;
+    font-family: 'ExtraLightFont', sans-serif;
     color:#1a1a1a;
 }
 /* Stronger shadow */
@@ -17,16 +17,23 @@
   }
 
 @font-face {
-    font-family: NexaExtraLight;
-    src: url(./assets/Outfit/static/Outfit-Thin.ttf);
+    font-family: ExtraLightFont;
+    src: url(./assets/ExtraLightFont/Outfit-ExtraLight.ttf);
 }
 @font-face {
-    font-family: NexaHeavy;
-    src: url(./assets/Outfit/static/Outfit-Bold.ttf);
+    font-family: HeavyFont;
+    src: url(./assets/HeavyFont/Outfit-Medium.ttf);
+
 }
 @font-face {
-    font-family: IntegralMediumRegular;
-    src: url(./assets/Integral-CF-Font-Family/Fontspring-DEMO-integralcf-medium.otf);
+    font-family: BigFont;
+    src: url(./assets/BigFont/Syne-ExtraBold.ttf);
+}
+
+.fade-out {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 2s, opacity 2s linear;
 }
 
 @layer base {

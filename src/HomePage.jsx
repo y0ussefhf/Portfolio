@@ -27,21 +27,21 @@ export default function HomePage({Selected,setSelected}) {
                   <Container onClick={()=>handleClick(index)} key={index} Category={Category} />
               ))}
           </div>
-          <div className="mx-10 lg:mx-20 mb-12 pb-4 flex flex-col justify-center lg:grid lg:grid-cols-[60%_18%] gap-8 lg:gap-[24.3rem]">
+          <div className="mx-10 lg:mx-20 mb-12 pb-4 flex flex-col justify-center lg:grid lg:grid-cols-[75%_25%] gap-8 lg:gap-2">
               <div className="lg:mr-40">
-              <h1 className="font-[IntegralMediumRegular] font-bold mr-28 text-4xl border-b-2 pb-4 px-1 border-black lg:text-7xl">YOUSSEF HESHAM</h1>
-              <p className="font-[NexaExtraLight] mt-2 font-bold text-xl">
+              <h1 className="font-[BigFont] text-4xl border-b-2 pb-4 px-1 border-black lg:text-7xl">YOUSSEF HESHAM</h1>
+              <p className="font-[ExtraLightFont] mt-2 font-bold text-xl">
                   An architect and 3D artist specialising in archviz and character art, combined with a decade of experience in 3D art. My journey through the world of 3D has taken me from animation to character art to automotive design all the way to archviz.
               </p>
-              <p className="font-[NexaExtraLight] pt-2 text-xl">
+              <p className="font-[ExtraLightFont] pt-2 text-xl">
                   Currently Based in Cairo, Egypt.
               </p>
               </div>
               <div className="flex flex-col justify-self-end">
-              <div class="font-[IntegralMediumRegular] justify-end text-transparent ml-32 lg:ml-6 pb-4 border-b-2 mb-2 inline-block text-end text-4xl border-black font-bold lg:text-7xl text-stroke-black">
+              <div class="font-[BigFont] justify-end text-transparent ml-32 lg:ml-6 pb-4 border-b-2 mb-2 inline-block text-end text-4xl border-black font-bold lg:text-7xl text-stroke-black">
                   SKILLS
               </div>
-              <div className="font-[NexaExtraLight] flex text-xl justify-end lg:justify-end flex-wrap font-bold">
+              <div className="font-[ExtraLightFont] flex text-xl justify-end lg:justify-end flex-wrap font-bold">
                       <p>•Blender</p>
                       <p>•ZBrush</p>
                       <p>•Maya</p>

@@ -43,6 +43,13 @@ export const data = {
             "name": "ARCHVIZ",
             "projects": [
                 {
+                    name: "Water Sports Center",
+                    description: "Design 4 Project - Design and Visualisation",
+                    image: "https://mir-s3-cdn-cf.behance.net/project_modules/fs/1dd4c5205329145.671ac70d85199.jpg",
+                    link: "https://www.behance.net/gallery/205329145/Design-4-%282021%29?",
+                    className: "lg:col-span-4 lg:row-span-2"
+                },
+                {
                     name: "Nexus",
                     description: "Graduation Project - Design and Visualisation",
                     image: "https://mir-s3-cdn-cf.behance.net/project_modules/max_3840_webp/91278c187319055.65859c7b46967.jpg",
@@ -58,6 +65,14 @@ export const data = {
                     description: "Housing Project - Design and Visualisation",
                     image: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/d7c8a9180302415.6508a0e5400b8.png",
                     link: "https://www.behance.net/gallery/180302415/Housing-Project-(Rework)",
+                    className: "lg:row-span-2",
+                    multipleImages: false
+                },
+                {
+                    name: "Bedroom 4",
+                    description: "Design and Visualisation",
+                    image: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/ca8d91205733411.66c030e6655a7.jpg",
+                    link: "https://www.behance.net/gallery/205733411/Bedroom-4",
                     className: "lg:row-span-2",
                     multipleImages: false
                 },
@@ -113,20 +128,21 @@ export const data = {
                     className: "lg:col-span-2 lg:row-span-2",
                     multipleImages: false
                 },
-                {
-                    name: "Water Sports Center",
-                    description: "Design 4 Project - Design and Visualisation",
-                    image: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/dc0a1d205329145.66b97707de051.jpg",
-                    link: "https://www.behance.net/gallery/205329145/Design-4-%282021%29?",
-                    className: "lg:col-span-4 lg:row-span-2"
-                }
+               
    
             ]
         },
         {
             name: "INTERIOR DESIGN",
             projects: [
-                
+                {
+                    name: "Bedroom 4",
+                    description: "Design and Visualisation",
+                    image: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/ca8d91205733411.66c030e6655a7.jpg",
+                    link: "https://www.behance.net/gallery/205733411/Bedroom-4",
+                    className: "lg:row-span-2",
+                    multipleImages: false
+                },
                 {
                     name: "Cozy Cabin",
                     description: "Design and Visualisation",
