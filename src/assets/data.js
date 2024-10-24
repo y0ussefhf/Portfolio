@@ -43,6 +43,13 @@ export const data = {
             "name": "ARCHVIZ",
             "projects": [
                 {
+                    name: "Water Sports Center",
+                    description: "Design 4 Project - Design and Visualisation",
+                    image: "https://mir-s3-cdn-cf.behance.net/project_modules/fs/1dd4c5205329145.671ac70d85199.jpg",
+                    link: "https://www.behance.net/gallery/205329145/Design-4-%282021%29?",
+                    className: "lg:col-span-4 lg:row-span-2"
+                },
+                {
                     name: "Nexus",
                     description: "Graduation Project - Design and Visualisation",
                     image: "https://mir-s3-cdn-cf.behance.net/project_modules/max_3840_webp/91278c187319055.65859c7b46967.jpg",
@@ -121,13 +128,7 @@ export const data = {
                     className: "lg:col-span-2 lg:row-span-2",
                     multipleImages: false
                 },
-                {
-                    name: "Water Sports Center",
-                    description: "Design 4 Project - Design and Visualisation",
-                    image: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/dc0a1d205329145.66b97707de051.jpg",
-                    link: "https://www.behance.net/gallery/205329145/Design-4-%282021%29?",
-                    className: "lg:col-span-4 lg:row-span-2"
-                }
+               
    
             ]
         },

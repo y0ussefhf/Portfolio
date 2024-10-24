@@ -11,14 +11,14 @@ export default function About() {
             <div className="pl-8 pt-6 pr-8 lg:pr-0 lg:pl-20 lg:pt-12 lg:w-3/4">
                 <div>
                 <div>
-                    <h1 className="border-b-2 border-black font-[NexaHeavy] text-2xl pb-2">ABOUT ME</h1>
+                    <h1 className="border-b-2 border-black font-[HeavyFont] text-2xl pb-2">ABOUT ME</h1>
                     <div className="flex justify-between pt-2 flex-col lg:flex-row"></div>
                     <div className="font-bold text-lg">
                            Born and raised in Cairo, Egypt, I am an Architectural Engineer with a deep passion for art and design. My journey with art began at the age of 9, and I've dedicated the past decade to honing my skills in both painting and 3D art, trying to find a balance between engineering and artistic vision. Alongside my professional interests, I am an avid fan of music, gaming, cinema, car culture, bodybuilding and anime, all of which inspire and influence many of my creative projects.
                            <div className="flex justify-between pt-2 flex-col lg:flex-row"></div>
                         </div>
                 </div>
-                    <h1 className="border-b-2 border-black text-2xl font-[NexaHeavy] pb-2">EXPERIENCE</h1>
+                    <h1 className="border-b-2 border-black text-2xl font-[HeavyFont] pb-2">EXPERIENCE</h1>
                     <div className="flex justify-between pt-2 flex-col lg:flex-row">
                         <div className="font-bold text-lg">
                             Nasr Consultant | Intern
@@ -34,7 +34,7 @@ export default function About() {
                     </ul>
                 </div>
                 <div>
-                    <h1 className="border-b-2 border-black font-[NexaHeavy] text-2xl py-2">EDUCATION</h1>
+                    <h1 className="border-b-2 border-black font-[HeavyFont] text-2xl py-2">EDUCATION</h1>
                     <div className="flex flex-col lg:flex-row justify-between pt-2">
                         <div className="text-lg font-bold">
                             Arab Academy for Science and Technology - College of Engineering
@@ -48,7 +48,7 @@ export default function About() {
                     </div>
                 </div>
                 <div>
-                    <h1 className="border-b-2 border-black font-[NexaHeavy] text-2xl pb-2">SKILLS</h1>
+                    <h1 className="border-b-2 border-black font-[HeavyFont] text-2xl pb-2">SKILLS</h1>
                     <ul className="pl-12 list-disc pt-2 font-bold">
                         <li className="pl-4">3D Modelling</li>
                         <li className="pl-4">3D Texturing</li>

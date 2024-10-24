@@ -36,9 +36,9 @@ function App() {
           <div className="background"/>
           <div className="grainOverlay"/>
           <div className="pt-8 md:pt-16 lg:pt-16 px-2 mx-8 lg:mx-20 pb-4 text-lg lg:text-2xl border-b-2 border-black flex justify-between">
-            <h1 onClick={() => handleClick("Home")} className={`${Selected == "Home" ? "font-bold font-[NexaHeavy]" : "font-bold font-[NexaExtraLight]"} ease-in-out duration-500 hover:cursor-pointer`}>HOME</h1>
-            <h1 onClick={() => handleClick("About")} className={`${Selected == "About" ? "font-bold font-[NexaHeavy]" : "font-bold font-[NexaExtraLight]"} hover:cursor-pointer`}>ABOUT ME</h1>
-            <h1 onClick={() => handleClick("Contact")} className={`${Selected == "Contact" ? "font-bold font-[NexaHeavy]" : "font-bold font-[NexaExtraLight]"} hover:cursor-pointer`}>CONTACT</h1>
+            <h1 onClick={() => handleClick("Home")} className={`${Selected == "Home" ? "font-bold font-[HeavyFont]" : "font-bold font-[ExtraLightFont]"} hover:cursor-pointer`}>HOME</h1>
+            <h1 onClick={() => handleClick("About")} className={`${Selected == "About" ? "font-bold font-[HeavyFont]" : "font-bold font-[ExtraLightFont]"} hover:cursor-pointer`}>ABOUT ME</h1>
+            <h1 onClick={() => handleClick("Contact")} className={`${Selected == "Contact" ? "font-bold font-[HeavyFont]" : "font-bold font-[ExtraLightFont]"} hover:cursor-pointer`}>CONTACT</h1>
           </div>
           <div className="flex-grow scrollbar-hide overflow-y-auto">
             {(Selected == "Home" || Selected == "projectsSection") && <HomePage Selected={Selected} setSelected={setSelected} />}
