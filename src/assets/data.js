@@ -33,9 +33,14 @@ export const data = {
           image: "bg-[url('/src/assets/6.jpg')]"
         },
         {
-          smallname: "OTHER",
-          name: "ART",
+          smallname: "DIGITAL",
+          name: "PAINTING",
           image: "bg-[url('/src/assets/7.jpg')]"
+        },
+        {
+          smallname: "PRODUCT",
+          name: "VIZ",
+          image: "bg-[url('/src/assets/8.jpg')]"
         }
     ],
     "sections": [
@@ -321,6 +326,13 @@ export const data = {
             name: "CHARACTER ART",
             projects: [
                 {
+                    name: "Daft Punk",
+                    description: "Sculpting, Modeling, Texturing and LookDev",
+                    image: "https://mir-s3-cdn-cf.behance.net/project_modules/disp/bf1976212155959.67304eee20381.jpg",
+                    link: "https://www.behance.net/gallery/212155959/Daft-Punk",
+                    className: "lg:row-span-2"
+                },
+                {
                     name: "Niko Bellic",
                     description: "Sculpting, Modeling, Texturing and LookDev",
                     image: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/0246c3201212689.667087efc2f3f.jpg",
@@ -353,7 +365,7 @@ export const data = {
                     description: "Sculpting, Modeling, Texturing and LookDev",
                     image: "https://mir-s3-cdn-cf.behance.net/project_modules/max_3840/913bc1205324501.66b94f7ef105e.jpg",
                     link: "https://www.behance.net/gallery/205324501/Gyro-Zepelli?",
-                    className: "lg:col-span-2 lg:row-span-2"
+                    className: "lg:col-span-3 lg:row-span-2"
                 },
                 {
                     name: "Mugen",
@@ -400,22 +412,8 @@ export const data = {
             ]
         },
         {
-            name: "OTHER ART",
+            name: "DIGITAL PAINTING",
             projects: [
-                {
-                    name: "Self-Portrait",
-                    description: "Sculpting, Modeling, Texturing and LookDev",
-                    image: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/e2cdf2171922159.6476d8c434642.jpg",
-                    link: "https://www.behance.net/gallery/98876893/Self-Portrait",
-                    className: "lg:col-span-1 lg:row-span-2"
-                },
-                {
-                    name: "Abstract",
-                    description: "Texturing and LookDev",
-                    image: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/490599171922097.6476d8825564d.jpg",
-                    link: "https://www.behance.net/gallery/171922097/Random",
-                    className: "lg:col-span-1 lg:row-span-2"
-                },
                 {
                     name: "Seba Jun",
                     description: "Digital Painting",
@@ -463,8 +461,35 @@ export const data = {
                     description: "Digital Painting",
                     image: "https://mir-s3-cdn-cf.behance.net/project_modules/max_3840/180f8571866707.5bd37db565cb6.png",
                     link: "https://www.behance.net/gallery/71866707/Old-art",
-                    className: "lg:col-span-4 lg:row-span-2"
+                    className: "lg:col-span-2 lg:row-span-2"
                 },
+            ]
+        },
+        {
+            name: "PRODUCT VIZ",
+            projects: [
+                {
+                    name: "Valentino",
+                    description: "Texturing and LookDev",
+                    image: "https://mir-s3-cdn-cf.behance.net/project_modules/1400/2cb14a205451093.66bb4ef7b3e6b.jpg",
+                    link: "https://www.behance.net/gallery/205451093/Valentino-3D-Visualization",
+                    className: "lg:col-span-2 lg:row-span-2"
+                },
+                {
+                    name: "3 in 1 Wireless Charger",
+                    description: "Modeling, Texturing and LookDev",
+                    image: "https://mir-s3-cdn-cf.behance.net/project_modules/1400/fee0b3173715317.64949bfc4e4f4.png",
+                    link: "https://www.behance.net/gallery/173715317/3-in-1-Wireless-Charger-3D-Modeling-Animation",
+                    className: "lg:col-span-2 lg:row-span-2"
+                }
+                ,
+                {
+                    name: "Box N' Move",
+                    description: "3D Mockups : Modeling, Texturing and LookDev",
+                    image: "https://mir-s3-cdn-cf.behance.net/project_modules/disp/51c469110728793.6029443df06af.gif",
+                    link: "https://www.behance.net/gallery/110728793/BOX-N-MOVE-(Branding-and-Art-Direction)",
+                    className: "lg:col-span-1 lg:row-span-2"
+                }
             ]
         }
     ]

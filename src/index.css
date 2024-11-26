@@ -33,7 +33,7 @@
 .fade-out {
   visibility: hidden;
   opacity: 0;
-  transition: visibility 0s 2s, opacity 2s linear;
+  transition: visibility 0s 5s, opacity 2s linear;
 }
 
 @layer base {
@@ -105,7 +105,7 @@
   pointer-events: none;
   mix-blend-mode: overlay;
   z-index: 50;
-  opacity: 50%;
+  opacity: 30%;
 }
 
 .background {
@@ -115,9 +115,10 @@
   left: 0;
   right: 0;
   background-repeat: repeat;
-  background-image: url("/src/assets/bg.jpg");
+  background-image: url("/src/assets/paperTex.jpg") ;
   pointer-events: none;
   z-index: -1;
+  opacity: 30%;
 }
 
 

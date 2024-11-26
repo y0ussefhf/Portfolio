@@ -11,7 +11,7 @@ export default function About() {
             <div className="pl-8 pt-6 pr-8 lg:pr-0 lg:pl-20 lg:pt-12 lg:w-3/4">
                 <div>
                 <div>
-                    <h1 className="border-b-2 border-black font-[HeavyFont] text-2xl pb-2">ABOUT ME</h1>
+                    <h1 className="border-b-2 border-black font-[HeavyFont] text-2xl pb-2">BRIEF</h1>
                     <div className="flex justify-between pt-2 flex-col lg:flex-row"></div>
                     <div className="font-bold text-lg">
                            Born and raised in Cairo, Egypt, I am an Architectural Engineer with a deep passion for art and design. My journey with art began at the age of 9, and I've dedicated the past decade to honing my skills in both painting and 3D art, trying to find a balance between engineering and artistic vision. Alongside my professional interests, I am an avid fan of music, gaming, cinema, car culture, bodybuilding and anime, all of which inspire and influence many of my creative projects.
@@ -31,6 +31,28 @@ export default function About() {
                         <li className="pl-4">Initial exterior design concepts for Banque du Caire – Aswan Branch </li>
                         <li className="pl-4">Initial floor plan for Banque du Caire – Aswan Branch </li>
                         <li className="pl-4">BOQ Revision </li>
+                    </ul>
+                    <div className="flex justify-between pt-2 flex-col lg:flex-row">
+                        <div className="font-bold text-lg">
+                            Freelance
+                        </div>
+                        <div className="text-zinc-700 lg:self-center font-semibold">
+                            2019 - Present
+                        </div>
+                    </div>
+                    <ul className="pl-8 font-bold list-disc">
+                        <li className="pl-4">Created fully realized and rigged 3D character models.</li>
+                        <li className="pl-4">Employed procedural workflows to achieve lifelike materials and lighting
+                        interactions.</li>
+                        <li className="pl-4">Used parametric methods of modeling to create various objects.</li>
+                        <li className="pl-4">Created both high-poly and low-poly versions of models for use in
+                        different mediums.</li>
+                        <li className="pl-4">Utilized XGen to create realistic hair, utilising styling techniques such as
+                        adjusting density, length, and directionfor realistic lifelike hair.</li>
+                        <li className="pl-4">Focused on creating functional and aesthetically pleasing spaces.</li>
+                        <li className="pl-4">Utilized advanced rendering techniques to create high-quality, photorealistic
+                        images</li>
+
                     </ul>
                 </div>
                 <div>
@@ -62,7 +84,7 @@ export default function About() {
                 </div>
                 
             </div>
-            <div className="hidden pr-20 lg:flex justify-end w-2/5 h-2/5 self-end"><Image isBlurred shadow="lg" className="lg:w-full" src="assets/AboutPicture.png" /></div>
+            <div className="hidden pr-20 lg:flex  self-center w-2/5 h-2/5 "><Image isBlurred shadow="lg" className="lg:w-full" src="assets/AboutPicture.png" /></div>
         </div>
     )
 }
