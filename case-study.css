@@ -1,0 +1,128 @@
+/* GT-002 case study — darker, warmer ground than the homepage (#140503 vs
+   #0a0908) so the film's own red/green world owns the page. */
+html,body{margin:0;padding:0;background:#140503;color:#efe9df}
+body{font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#efe9df;text-decoration:none}
+a:hover{color:#FF7A1A}
+a:focus-visible{outline:2px solid #FF7A1A;outline-offset:3px;border-radius:2px}
+::selection{background:#FF7A1A;color:#140503}
+*{box-sizing:border-box}
+/* Same GT-002 green as the homepage hero glow — this page IS GT-002. */
+:root{--gt002:132 214 70}
+h1,h2{margin:0;font-size:inherit;font-weight:inherit}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+.page{background:#140503;min-height:100vh;position:relative;overflow-x:clip}
+.fill{position:absolute;inset:0}
+
+/* 0.5px blur softens the grain so it reads as emulsion rather than pixel
+   noise. Blur costs ~39%% of the contrast, so the transfer slope is raised
+   3 -> 5 and the intercept retuned -1.2 -> -2.2 to compensate: measured
+   POST-blur mean 128.4 (dead on overlay's 128 pivot, so exposure is
+   unchanged) at stdDev 54.8, still 2.7x the raw texture's 20.2. */
+/* Grain: overlay is the correct operator — it darkens below the 0.5 pivot and
+   lightens above it, so blacks stay black. What was broken is the TEXTURE.
+   Raw fractalNoise measured min 89 / max 242 / stdDev 20 — clustered right on
+   overlay's pivot, where overlay is close to a no-op, and semi-transparent
+   (alpha 23-232) on top of that. The feComponentTransfer below expands it to
+   the full 0-255 range at stdDev ~70 (3.4x the contrast) with alpha locked
+   opaque, and slope/intercept are tuned so the mean lands at ~133 — near the
+   128 pivot, so the grain adds texture without shifting overall exposure. */
+.grain{
+  position:fixed;inset:0;z-index:50;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='5' intercept='-2.2'/%3E%3CfeFuncG type='linear' slope='5' intercept='-2.2'/%3E%3CfeFuncB type='linear' slope='5' intercept='-2.2'/%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:240px 240px;opacity:0.11;mix-blend-mode:overlay;
+  filter:blur(0.5px);
+}
+
+/* Placeholder for unfilled imagery — replace with real <img>/<video>.
+   0.6 alpha clears WCAG AA against this ground. */
+.tile-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.img-slot{
+  width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;
+  padding:16px;background:linear-gradient(135deg,#33160c,#140503);color:rgba(239,233,223,0.6);
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.07em;text-transform:uppercase;line-height:1.6;
+}
+
+/* Nav — sticky, matching the homepage so wayfinding is consistent across pages */
+.nav{display:flex;flex-wrap:wrap;align-items:baseline;gap:12px 32px;padding:20px clamp(20px,4vw,56px);border-bottom:1px solid rgba(239,233,223,0.16);position:sticky;top:0;z-index:5;background:rgba(20,5,3,0.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.logo{font-weight:900;font-size:15px;letter-spacing:0.14em;font-variation-settings:'wdth' 118}
+.spacer{flex:1}
+.back-link{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.14em;color:rgba(239,233,223,0.7)}
+
+/* Hero */
+.hero{position:relative;height:min(94vh,880px);overflow:hidden}
+.hero-wordmark{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;font-weight:900;font-variation-settings:'wdth' 125;font-size:clamp(80px,19vw,340px);color:rgb(var(--gt002));opacity:0.46;filter:blur(6px);line-height:1;user-select:none}
+.hero-shade{position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 95% at 50% 38%, rgba(58,12,7,0) 38%, rgba(34,7,4,0.78) 100%)}
+.hero-copy{position:absolute;left:clamp(20px,4vw,56px);bottom:36px;pointer-events:none}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.14em;color:#FF7A1A;margin-bottom:12px}
+.hero-title{font-weight:900;font-size:clamp(52px,9vw,140px);line-height:0.9;font-variation-settings:'wdth' 122}
+.hero-credit{position:absolute;right:clamp(20px,4vw,56px);bottom:40px;pointer-events:none;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;color:rgba(239,233,223,0.65);line-height:1.9}
+/* Below ~640px the title's clamp still spans the full container, so a
+   bottom-right-anchored credit lands on top of the GT-002 glyphs. Lift it
+   clear of the title band and left-align it with the rest of the hero copy. */
+@media (max-width:640px){
+  .hero-credit{right:auto;left:clamp(20px,4vw,56px);bottom:auto;top:calc(100% - 190px);text-align:left;line-height:1.7}
+  .hero-copy{bottom:28px}
+}
+
+.section-num{flex:0 0 auto;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.16em;color:#FF7A1A}
+.section-num-red{color:#ff6b5a}
+
+/* Copy still to be supplied — visibly marked rather than invented. */
+/* Real body copy. The canvas set this at alpha 0.45, which measures 3.89:1 on
+   the #140503 ground and fails AA at 13px; 0.6 gives 6.20:1 and matches the
+   scale already used elsewhere on this page. */
+.case-copy{margin:22px 0 0;font-family:'JetBrains Mono',monospace;font-size:13px;
+  line-height:1.8;color:rgba(239,233,223,0.6);max-width:52ch;text-wrap:pretty}
+.case-copy + .case-copy{margin-top:18px}
+/* Vimeo embed filling the hero. Cover-crops to the header box the way the
+   still it replaced did, so the framing does not jump. */
+.hero-video-embed{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:100%;height:56.25vw;min-height:100%;min-width:177.78vh;border:0}
+.copy-todo{margin:24px 0 0;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.8;color:rgba(239,233,223,0.6);max-width:52ch;border-left:2px solid rgba(255,122,26,0.4);padding-left:14px}
+
+/* Premise */
+.premise{padding:clamp(48px,7vw,96px) clamp(20px,4vw,56px);border-bottom:1px solid rgba(239,233,223,0.16);display:flex;flex-wrap:wrap;gap:clamp(28px,5vw,80px)}
+.premise-body{flex:1 1 420px;max-width:62ch}
+.premise-lead{margin:0;font-size:clamp(19px,1.7vw,26px);line-height:1.55;font-weight:600;text-wrap:pretty}
+
+/* Split sections */
+.split{display:flex;flex-wrap:wrap;border-bottom:1px solid rgba(239,233,223,0.16)}
+.split-reverse{flex-direction:row-reverse}
+.split-media{flex:1 1 420px;min-height:440px;position:relative;overflow:hidden}
+.split-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(62% 54% at 50% 46%, rgba(255,107,90,0.16) 0%, rgba(255,107,90,0) 72%)}
+.split-shade{position:absolute;inset:0;pointer-events:none;background:radial-gradient(100% 100% at 50% 40%, rgba(58,12,7,0) 42%, rgba(30,7,4,0.62) 100%)}
+.split-copy{flex:1 1 380px;padding:clamp(36px,5vw,72px) clamp(20px,4vw,56px);display:flex;flex-direction:column;justify-content:center;gap:20px}
+.split-title{font-weight:900;font-size:clamp(30px,3.4vw,52px);line-height:0.98;font-variation-settings:'wdth' 118}
+.outline{color:transparent;-webkit-text-stroke:1.5px rgba(239,233,223,0.75)}
+/* Visual line break that keeps a real word boundary in the text content, so a
+   screen reader does not announce "RED.RED AGAINST GREEN." */
+.title-line{display:block}
+/* -webkit-text-stroke is unsupported outside WebKit/Blink; with no fill
+   fallback the text renders fully invisible there instead of degrading. */
+@supports not ((-webkit-text-stroke: 1px red) or (text-stroke: 1px red)){
+  .outline{color:rgba(239,233,223,0.75)}
+}
+
+/* Inversion — the reveal, on its own green-black ground */
+.inversion{position:relative;background:#05170c;border-bottom:1px solid rgba(239,233,223,0.16)}
+.inversion-head{padding:clamp(48px,7vw,96px) clamp(20px,4vw,56px) 0}
+.inversion-title{font-weight:900;font-size:clamp(36px,5.5vw,84px);line-height:0.94;font-variation-settings:'wdth' 120;color:#ff6b5a;margin-top:20px;text-shadow:0 0 44px rgba(255,107,90,0.28);max-width:16ch}
+.inversion-grid{display:flex;flex-wrap:wrap;gap:2px;padding:clamp(32px,4vw,56px) clamp(20px,4vw,56px) clamp(48px,7vw,96px)}
+.inversion-tile{flex:1 1 320px;height:380px;position:relative;overflow:hidden}
+.inversion-tile::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(62% 54% at 50% 46%, rgb(var(--gt002) / 0.24) 0%, rgb(var(--gt002) / 0) 72%)}
+
+/* Credits */
+.credits{padding:clamp(48px,7vw,96px) clamp(20px,4vw,56px);display:flex;flex-wrap:wrap;gap:clamp(28px,5vw,80px);border-bottom:1px solid rgba(239,233,223,0.16)}
+.credits-grid{flex:1 1 380px;display:grid;grid-template-columns:max-content 1fr;gap:10px 32px;font-size:15px;align-content:start;margin:0}
+.credits-grid dt{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.1em;color:rgba(239,233,223,0.65)}
+.credits-grid dd{margin:0}
+
+/* Footer */
+.footer{padding:clamp(40px,6vw,72px) clamp(20px,4vw,56px);display:flex;flex-wrap:wrap;gap:24px;align-items:baseline;justify-content:space-between}
+.footer-back{font-weight:900;font-size:clamp(24px,3vw,40px);font-variation-settings:'wdth' 118}
+.footer-mail{font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:0.1em}

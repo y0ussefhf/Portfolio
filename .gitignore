@@ -1,0 +1,30 @@
+# Untouched source renders — 16 MB of unoptimized originals. The site ships the
+# optimized set in uploads/ instead. Git handles large binaries poorly and these
+# never change, so they stay local.
+uploads/original/
+
+# Claude Design canvas source and its runtime. The deployable site is the plain
+# .html/.css/.js files; these are the design surface, not part of the build.
+*.dc.html
+image-slot.js
+support.js
+.image-slots.state.json
+.thumbnail/
+
+# Design brief — kept local rather than published.
+PRODUCT.md
+
+# Working files
+nav-displacement.b64
+*.log
+
+# OS
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Merge artifact from syncing against the Claude Design canvas
+*.dc.html.mine
+
+# Critique output from earlier review rounds
+.impeccable/

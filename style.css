@@ -1,0 +1,368 @@
+html,body{margin:0;padding:0;background:#0a0908;color:#e6e1d8}
+body{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 100;-webkit-font-smoothing:antialiased}
+a{color:#e6e1d8;text-decoration:none}
+a:hover{color:#FF7A1A}
+a:focus-visible,button:focus-visible{outline:2px solid #FF7A1A;outline-offset:3px;border-radius:2px}
+::selection{background:#FF7A1A;color:#0a0908}
+*{box-sizing:border-box}
+/* GT-002's own light. Distinct from --ui-accent (#FF7A1A) on purpose: the
+   flagship should not share its hue with link-hover and focus rings. */
+:root{--gt002:132 214 70;--ui-accent:#FF7A1A}
+/* Section titles are real h2/h3 for screen-reader section-jump + document outline;
+   these resets keep their visual treatment identical to the former divs. */
+h1,h2,h3{margin:0;font-size:inherit;font-weight:inherit}
+/* Visually hidden but announced — used to complete "GET IN TOUCH" as one
+   heading, since the outline-styled "TOUCH" is a separate presentational line. */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media (prefers-reduced-motion:reduce){
+  .hero-video{display:none}
+}
+
+.page{background:#0a0908;min-height:100vh;position:relative;overflow-x:clip}
+
+/* 0.5px blur softens the grain so it reads as emulsion rather than pixel
+   noise. Blur costs ~39%% of the contrast, so the transfer slope is raised
+   3 -> 5 and the intercept retuned -1.2 -> -2.2 to compensate: measured
+   POST-blur mean 128.4 (dead on overlay's 128 pivot, so exposure is
+   unchanged) at stdDev 54.8, still 2.7x the raw texture's 20.2. */
+/* Grain: overlay is the correct operator — it darkens below the 0.5 pivot and
+   lightens above it, so blacks stay black. What was broken is the TEXTURE.
+   Raw fractalNoise measured min 89 / max 242 / stdDev 20 — clustered right on
+   overlay's pivot, where overlay is close to a no-op, and semi-transparent
+   (alpha 23-232) on top of that. The feComponentTransfer below expands it to
+   the full 0-255 range at stdDev ~70 (3.4x the contrast) with alpha locked
+   opaque, and slope/intercept are tuned so the mean lands at ~133 — near the
+   128 pivot, so the grain adds texture without shifting overall exposure. */
+.grain{
+  position:fixed;inset:0;z-index:50;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='5' intercept='-2.2'/%3E%3CfeFuncG type='linear' slope='5' intercept='-2.2'/%3E%3CfeFuncB type='linear' slope='5' intercept='-2.2'/%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:240px 240px;opacity:0.11;mix-blend-mode:overlay;
+  filter:blur(0.5px);
+}
+
+/* Scroll reveals. Gated behind .js (set by an inline script in <head>) so that
+   with JS off or broken nothing is ever left invisible - the content simply
+   renders normally. Transform+opacity only, both compositor-friendly, so this
+   does not cause layout work while scrolling. */
+.js [data-reveal]{opacity:0;transform:translateY(22px);
+  transition:opacity 0.9s cubic-bezier(0.16,1,0.3,1),transform 0.9s cubic-bezier(0.16,1,0.3,1);
+  transition-delay:var(--d,0ms)}
+.js [data-reveal="fade"]{transform:none}
+/* Failsafe: script.js never announced itself, so show everything rather than
+   leaving the page blank. */
+.js.reveals-failed [data-reveal]{opacity:1;transform:none;transition:none}
+.js [data-reveal].is-in{opacity:1;transform:none}
+/* Motion is the whole point here, so reduced-motion gets no animation at all
+   rather than a shortened one. */
+@media (prefers-reduced-motion:reduce){
+  .js [data-reveal]{opacity:1;transform:none;transition:none}
+}
+
+/* Nav */
+/* Sticky so Contact/About stay reachable from anywhere on a ~5500px page.
+   Scrim + blur keeps the wordmark legible over full-bleed hero imagery. */
+.filter-defs{position:absolute;width:0;height:0;overflow:hidden}
+/* Glass strip. The scrim is lighter than a normal frosted bar (0.55 vs 0.82) so
+   there is actually something to see refracting through it; nav text contrast is
+   checked against the brightest imagery that passes underneath. */
+.nav{display:flex;flex-wrap:wrap;align-items:baseline;gap:12px 32px;padding:20px clamp(20px,4vw,56px);border-bottom:1px solid rgba(230,225,216,0.22);position:sticky;top:0;z-index:5;background:rgba(10,9,8,0.68);backdrop-filter:blur(14px) saturate(1.7);-webkit-backdrop-filter:blur(14px) saturate(1.7)}
+/* Refraction proper. Firefox has backdrop-filter but not SVG filters inside it,
+   so this is gated: everyone still gets the frosted bar above, and engines that
+   can do it get the displacement on top. */
+@supports (backdrop-filter: url("#nav-glass")){
+  .nav{backdrop-filter:saturate(1.7) url(#nav-glass) blur(3px);-webkit-backdrop-filter:saturate(1.7) url(#nav-glass) blur(3px)}
+}
+/* Specular edges: a bright lip along the top and a catch along the bottom, the
+   two places light collects on a real pane. */
+.nav::before,.nav::after{content:"";position:absolute;left:0;right:0;height:1px;pointer-events:none}
+.nav::before{top:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.28) 22%,rgba(255,255,255,0.10) 62%,transparent)}
+.nav::after{bottom:-1px;background:linear-gradient(90deg,transparent,rgba(255,122,26,0.20) 38%,transparent 78%)}
+/* Anchor targets must clear the sticky nav (~62px) instead of hiding under it. */
+#work,#about,#contact,#gt-002-film,#more{scroll-margin-top:72px}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+.logo{font-weight:900;font-size:15px;letter-spacing:0.14em;font-variation-settings:'wdth' 118}
+.spacer{flex:1}
+.nav-links{display:flex;gap:clamp(16px,3vw,40px);font-size:13px;letter-spacing:0.18em;font-weight:600}
+
+/* Below ~480px the logo + 3 links no longer fit one row; let the links wrap
+   onto their own full-width row instead of clipping off-screen. */
+@media (max-width:480px){
+  .nav{gap:10px 20px}
+  .spacer{display:none;flex-basis:100%}
+  .nav-links{flex-basis:100%;gap:20px}
+}
+
+.fill{position:absolute;inset:0}
+
+/* Placeholder for unfilled imagery — replace with real <img>/<video> */
+.img-slot{
+  width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;
+  padding:16px;background:linear-gradient(135deg,#17150f,#0a0908);color:rgba(230,225,216,0.6);
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.07em;text-transform:uppercase;line-height:1.6;
+}
+
+/* Hero film */
+.hero-film{position:relative;height:min(92vh,900px);overflow:hidden}
+.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.hero-film .img-slot{position:relative;z-index:1}
+/* Once a real <source> is added to .hero-video, script.js adds this class
+   and hides the placeholder so the actual footage shows through. */
+.hero-film.has-video .img-slot{display:none}
+.hero-film-darken{position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 90% at 50% 40%, rgba(10,9,8,0) 42%, rgba(10,9,8,0.72) 100%)}
+.hero-film-vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(140% 110% at 50% 35%, rgba(10,9,8,0) 45%, rgba(10,9,8,0.5) 100%)}
+
+/* Intro */
+.intro{padding:clamp(56px,9vw,128px) clamp(20px,4vw,56px);border-bottom:1px solid rgba(230,225,216,0.16)}
+.intro-name{margin:0;font-weight:900;font-size:clamp(44px,8vw,120px);line-height:0.94;letter-spacing:0.01em;font-variation-settings:'wdth' 118;text-wrap:balance}
+.intro-tag{font-weight:800;font-size:clamp(20px,2.6vw,35px);line-height:1.1;letter-spacing:0.06em;color:rgba(230,225,216,0.6);font-variation-settings:'wdth' 112;margin-top:14px}
+.intro-copy{max-width:52ch;font-size:clamp(17px,1.4vw,21px);line-height:1.65;color:rgba(230,225,216,0.86);margin:40px 0 0;text-wrap:pretty}
+
+/* Work */
+.work{padding:clamp(48px,7vw,96px) 0 0}
+.work-heading{padding:0 clamp(20px,4vw,56px) 26px;font-weight:900;font-size:clamp(22px,2.6vw,36px);letter-spacing:0.01em;font-variation-settings:'wdth' 118}
+
+.tile-gt002{position:relative;height:min(96vh,860px);overflow:hidden;border-top:1px solid rgba(230,225,216,0.16)}
+.tile-gt002-shade{position:absolute;inset:0;pointer-events:none;background:radial-gradient(110% 100% at 50% 30%, rgba(48,10,6,0) 28%, rgba(30,6,4,0.82) 100%)}
+.tile-gt002-glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(66% 56% at 50% 45%, rgb(var(--gt002) / 0.30) 0%, rgb(var(--gt002) / 0) 72%)}
+.tile-gt002-copy{position:absolute;left:clamp(20px,4vw,56px);bottom:36px;pointer-events:none;display:flex;flex-direction:column;gap:12px}
+/* Third-party validation on the best-performing piece — stated once, quietly,
+   in the accent colour rather than as a loud badge. */
+.tile-gt002-badge{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.16em;color:#FF7A1A;margin-bottom:-2px}
+.tile-gt002-title{font-weight:900;font-size:clamp(48px,8vw,128px);line-height:0.92;font-variation-settings:'wdth' 118;color:#e6e1d8}
+.tile-gt002-desc{font-size:clamp(14px,1.2vw,17px);color:rgba(230,225,216,0.72);max-width:40ch}
+.tile-gt002-links{display:flex;flex-wrap:wrap;align-items:baseline;gap:38px;margin-top:16px}
+.link-case-study{pointer-events:auto;font-size:clamp(17px,1.5vw,23px);font-weight:800;letter-spacing:0.005em;padding-bottom:8px;border-bottom:2px solid rgba(230,225,216,0.85);transition:border-color 0.6s cubic-bezier(0.22,1,0.36,1),color 0.6s cubic-bezier(0.22,1,0.36,1)}
+.link-case-study:hover{border-color:#FF7A1A;color:#FF7A1A}
+.link-watch-film{pointer-events:auto;font-size:15px;font-weight:600;color:rgba(230,225,216,0.6);transition:color 0.6s cubic-bezier(0.22,1,0.36,1)}
+.link-watch-film:hover{color:#e6e1d8}
+
+/* Whole-tile Behance links. Sit above the shade/glow layers (which are
+   pointer-events:none) so the entire image is the click target, while the
+   visible title stays outside the anchor for a cleaner reading order. */
+/* Small corner glyph marking a tile as an external jump to Behance. Lives
+   INSIDE .tile-link (not its own anchor) so there is one tab stop per tile and
+   no nested-link invalidity; aria-hidden because the anchor is already named.
+   pointer-events:none keeps the whole tile the click target.
+   Square with a hairline border, NOT a circle: border-radius appears nowhere
+   else on this site (only the 2px focus ring), so a disc read as foreign. This
+   is the .archive-band treatment at small scale. One size and one inset on
+   every tile, top and right equal, so the corner reads identically throughout. */
+.tile-arrow{
+  position:absolute;top:14px;right:14px;z-index:4;pointer-events:none;
+  width:28px;height:28px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;line-height:1;
+  color:rgba(230,225,216,0.9);background:rgba(10,9,8,0.5);
+  border:1px solid rgba(230,225,216,0.28);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  opacity:0.72;
+  transition:opacity 0.5s cubic-bezier(0.22,1,0.36,1),color 0.5s cubic-bezier(0.22,1,0.36,1),
+             border-color 0.5s cubic-bezier(0.22,1,0.36,1),background-color 0.5s cubic-bezier(0.22,1,0.36,1);
+}
+.tile-link:hover .tile-arrow,
+.tile-link:focus-visible .tile-arrow{
+  opacity:1;color:#FF7A1A;border-color:rgba(255,122,26,0.6);background:rgba(10,9,8,0.72);
+}
+@media (prefers-reduced-motion:reduce){.tile-arrow{transition:none}}
+.tile-link{position:absolute;inset:0;z-index:3;display:block}
+.tile-link:focus-visible{outline:2px solid #FF7A1A;outline-offset:-4px}
+/* Real imagery replacing an .img-slot placeholder. */
+.tile-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+
+/* All three split rows put .split-copy first in the DOM so tab and screen
+   reader order is identical regardless of which side the image sits on.
+   Visual placement is CSS's job, not source order's. */
+.split-left .split-copy,
+.split-daftpunk .split-copy{order:2}
+.split-left .split-media,
+.split-daftpunk .split-media{order:1}
+
+/* External cue on the contact links, matching the tiles and the archive band. */
+.contact-arrow{margin-left:8px;font-size:0.72em;color:#FF7A1A;transition:opacity 0.5s cubic-bezier(0.22,1,0.36,1)}
+
+/* Active section in the sticky nav. On a ~6700px page there was previously no
+   indication of where you are. */
+.nav-links a{position:relative;padding-bottom:3px}
+/* The active/hover cue is the underline, NOT a colour swap on the text. Orange
+   text over the brightest imagery that passes behind the glass measures 2.3:1 and
+   fails AA; cream on the same backdrop is 7.0:1. The underline is a non-text state
+   indicator, so it only needs 3:1 and clears it at 3.5:1. */
+.nav-links a:hover{color:#e6e1d8}
+.nav-links a:hover::after,
+.nav-links a[aria-current="true"]::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;background:#FF7A1A}
+@media (prefers-reduced-motion:reduce){.contact-arrow{transition:none}}
+
+/* Split rows (ASTON, DB11, Daft Punk) */
+.split{display:flex;flex-wrap:wrap;align-items:stretch;border-top:1px solid rgba(230,225,216,0.16)}
+.split-right{justify-content:flex-end}
+.split-left{justify-content:flex-start}
+.split-copy{flex:1 1 180px;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;gap:10px}
+.split-copy-right{align-items:flex-end;text-align:right;padding:28px clamp(20px,4vw,28px) 32px clamp(20px,4vw,56px)}
+.split-copy-left{padding:28px clamp(20px,4vw,56px) 32px clamp(20px,4vw,28px)}
+.split-eyebrow{display:block;font-size:12px;font-weight:700;letter-spacing:0.16em;color:rgba(230,225,216,0.58);margin-bottom:6px}
+.split-title{font-weight:900;font-size:clamp(28px,3.6vw,58px);line-height:0.95;font-variation-settings:'wdth' 118}
+.split-desc{font-size:15px;color:rgba(230,225,216,0.72);max-width:32ch}
+/* Origins carries a full production credit, not a one-line caption — 32ch
+   would run it to eight ragged lines against the image. */
+.split-desc-wide{max-width:46ch;line-height:1.6}
+/* Visual line break that keeps a real word boundary in the text content —
+   a bare <br> makes screen readers announce "ORIGINSCOLLECTION". */
+.title-line{display:block}
+.split-media{position:relative;z-index:0;flex:0 1 62%;min-width:min(100%,320px);height:min(66vh,604px);transition:filter 1.1s cubic-bezier(0.16,1,0.3,1)}
+.split-left .split-media{flex:0 1 52%;min-width:min(100%,300px);height:min(59vh,528px);transition:filter 0.85s cubic-bezier(0.16,1,0.3,1)}
+/* Colour as light, spilling OUT of the image onto the page rather than washing
+   over the photograph. The old version laid a low-alpha tint across the render
+   itself: against placeholders that read as light, but over real photography it
+   only muted the image (a 0.19 alpha wash moves mid-tones a few points) and the
+   hues sat up to 220 degrees away from the light actually in frame. A shadow is
+   not clipped by the element's own overflow:hidden, so the light reaches the
+   dark column beside each image the way real bounce would. Hue per project. */
+/* The glow is the image itself: a copy scaled slightly past the frame, heavily
+   blurred and pushed behind. A box-shadow could only ever be one flat hue, so
+   it never lined up with what was actually at each edge; this bleeds the real
+   edge colour outward, brighter where the picture is bright. Sits at z-index -1
+   inside .split-media's own stacking context, so it is behind the photograph
+   but still above the page. */
+.split-media::before{
+  content:"";position:absolute;inset:-7% -5%;z-index:-1;pointer-events:none;
+  background-image:var(--bloom);background-size:cover;background-position:center;
+  filter:blur(44px) saturate(1.45);opacity:0.55;
+  transition:opacity 0.9s cubic-bezier(0.16,1,0.3,1);
+}
+.split-media:hover::before{opacity:0.72}
+.split-daftpunk .split-media::before{inset:-9% -6%;filter:blur(36px) saturate(1.3);opacity:0.42}
+@media (prefers-reduced-motion:reduce){.split-media::before{transition:none}}
+.split-media-shade{position:absolute;inset:0;pointer-events:none}
+.split-media-shade-warm{background:radial-gradient(110% 120% at 70% 20%, rgba(40,24,4,0) 32%, rgba(24,14,2,0.82) 100%)}
+.split-media-shade-cool{background:radial-gradient(120% 100% at 30% 40%, rgba(8,18,30,0) 36%, rgba(5,12,22,0.78) 100%)}
+/* Origins Collection — icy blue light, keyed to the render's own glacial
+   environment and playing against ASTON's amber directly above it. */
+/* Daft Punk — the helmets are gold and chrome; that is the piece's colour. */
+.hover-brighten:hover{filter:brightness(1.1)}
+.hover-brighten-contrast:hover{filter:brightness(1.08) contrast(1.04)}
+
+/* Automotive concepts — deliberately quieter than the hero tiles above:
+   this is supporting work, not the headline act, so it gets a smaller
+   caption-style heading, shorter tiles, and restrained type. */
+.concepts{border-top:1px solid rgba(230,225,216,0.1);padding-top:clamp(28px,4vw,44px)}
+.concepts-heading{display:flex;flex-wrap:wrap;align-items:baseline;gap:clamp(16px,3vw,32px);padding:0 clamp(20px,4vw,56px) 18px}
+.concepts-title{font-weight:700;font-size:13px;letter-spacing:0.14em;color:rgba(230,225,216,0.65)}
+.concepts-desc{font-size:13px;color:rgba(230,225,216,0.6);max-width:44ch}
+.concepts-grid{display:flex;flex-wrap:wrap;gap:2px}
+.concept-tile{flex:1 1 260px;position:relative;height:clamp(160px,22vw,240px);overflow:hidden;transition:filter 0.95s cubic-bezier(0.16,1,0.3,1);filter:brightness(0.9)}
+.concept-tile:hover{filter:brightness(1.06)}
+.concept-tile .img-slot{position:absolute;inset:0}
+
+/* The per-project glow was removed from these tiles. It was authored against
+   placeholder boxes, where a low-alpha tint was the only colour present and so
+   read as light. Against the real renders it fails twice: the hues measured
+   175-223 degrees away from the actual light in each frame (gold-lit car under a
+   steel-blue wash), and at 0.24 alpha x 0.8 opacity it only shifts mid-tones by
+   a few points, so it muted the photograph instead of lighting it. The renders
+   carry their own light; nothing is laid over them now. */
+.concept-tile{position:relative}    /* LS-1001 — teal */
+.concept-label{position:absolute;left:20px;bottom:16px;pointer-events:none;font-weight:600;font-size:13px;letter-spacing:0.08em;color:rgba(230,225,216,0.85)}
+
+/* Daft Punk split — same quieter treatment as the concepts grid: a
+   personal/character piece, kept present but visually subordinate to the
+   automotive/product hero work above. */
+.split-daftpunk{border-top-color:rgba(230,225,216,0.1)}
+.split-daftpunk .split-media{flex:0 1 38%;min-width:min(100%,240px);height:clamp(180px,26vw,300px);transition:filter 0.95s cubic-bezier(0.16,1,0.3,1);filter:brightness(0.82)}
+.split-daftpunk .split-media:hover{filter:brightness(1)}
+.split-media-shade-dark{background:radial-gradient(115% 105% at 45% 35%, rgba(6,5,4,0) 36%, rgba(6,5,4,0.8) 100%)}
+/* Muted gold — same family as ASTON's #e8b04b but dimmer (6.93:1 vs 10.18:1),
+   so Daft Punk regains its own colour without competing with the hero work. */
+.split-daftpunk .split-title{font-size:clamp(18px,2vw,26px);font-weight:700;color:#b8934a}
+.split-daftpunk .split-desc{font-size:13.5px;color:rgba(230,225,216,0.55)}
+.split-copy-center{flex:1 1 240px;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:10px;padding:24px clamp(20px,4vw,56px)}
+
+/* Archive — a single honest band, not a grid of tiles that all lead to the
+   same page. Quiet by default (this is supporting material), lifting on hover. */
+.archive{border-top:1px solid rgba(230,225,216,0.16);padding:clamp(40px,6vw,72px) clamp(20px,4vw,56px) clamp(56px,8vw,96px)}
+.archive-band{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:20px clamp(24px,5vw,64px);
+  padding:clamp(26px,3.5vw,40px) clamp(22px,3vw,40px);border:1px solid rgba(230,225,216,0.16);
+  transition:border-color 0.6s cubic-bezier(0.22,1,0.36,1),background-color 0.6s cubic-bezier(0.22,1,0.36,1)}
+.archive-band:hover{border-color:rgba(255,122,26,0.55);background:rgba(255,122,26,0.05);color:#e6e1d8}
+.archive-band-copy{flex:1 1 340px;min-width:0}
+.archive-title{font-weight:900;font-size:clamp(22px,2.6vw,36px);letter-spacing:0.01em;font-variation-settings:'wdth' 118}
+.archive-desc{margin:12px 0 0;font-size:14px;line-height:1.6;color:rgba(230,225,216,0.6);max-width:56ch;text-wrap:pretty}
+.archive-cta{flex:0 0 auto;display:inline-flex;align-items:baseline;gap:9px;font-family:'JetBrains Mono',monospace;
+  font-size:13px;letter-spacing:0.08em;color:#FF7A1A;padding-bottom:5px;border-bottom:1px solid rgba(255,122,26,0.45);
+  transition:border-color 0.6s cubic-bezier(0.22,1,0.36,1)}
+.archive-band:hover .archive-cta{border-color:#FF7A1A}
+.archive-arrow{transition:transform 0.6s cubic-bezier(0.22,1,0.36,1)}
+.archive-band:hover .archive-arrow{transform:translate(2px,-2px)}
+@media (prefers-reduced-motion:reduce){.archive-arrow{transition:none}}
+
+/* About */
+.about{padding:clamp(64px,11vw,160px) clamp(20px,4vw,56px) clamp(48px,7vw,96px);border-top:1px solid rgba(230,225,216,0.16);display:flex;flex-wrap:wrap;gap:clamp(32px,6vw,104px);align-items:flex-start}
+.about-main{flex:1 1 460px;max-width:62ch;display:flex;flex-direction:column}
+.about-heading{font-weight:900;font-size:clamp(30px,4.2vw,62px);line-height:0.98;letter-spacing:-0.005em;font-variation-settings:'wdth' 118;margin-left:-0.04em}
+.about-heading-dim{color:rgba(230,225,216,0.55)}
+.about-copy{margin:clamp(36px,5vw,68px) 0 0;font-size:clamp(16px,1.35vw,20px);line-height:1.65;color:rgba(230,225,216,0.88);max-width:46ch;text-wrap:pretty}
+.about-copy-secondary{margin-top:22px;line-height:1.75;color:rgba(230,225,216,0.74);max-width:min(42ch,100%)}
+
+.about-side{flex:0 1 260px;display:flex;flex-direction:column;gap:34px;margin-top:clamp(8px,5vw,88px);font-size:15px}
+.about-location{display:flex;flex-direction:column;gap:3px}
+.about-location-city{font-size:clamp(17px,1.5vw,21px);font-weight:700;color:rgba(230,225,216,0.9)}
+.about-location-line{font-size:14px;color:rgba(230,225,216,0.58)}
+.about-programs{display:flex;flex-direction:column;gap:14px;padding-top:26px;border-top:1px solid rgba(230,225,216,0.14)}
+.about-label{font-size:12px;letter-spacing:0.16em;color:rgba(230,225,216,0.6)}
+.about-programs-list{display:flex;flex-direction:column;gap:11px;color:rgba(230,225,216,0.82)}
+.about-program{display:flex;align-items:center;gap:12px;line-height:1}
+.icon{flex:0 0 auto;width:15px;height:15px;display:block;background:rgba(230,225,216,0.78);
+  mask-size:contain;mask-position:center;mask-repeat:no-repeat;
+  -webkit-mask-size:contain;-webkit-mask-position:center;-webkit-mask-repeat:no-repeat}
+.icon-blender{mask-image:url(./icons/blender.svg);-webkit-mask-image:url(./icons/blender.svg)}
+.icon-photoshop{mask-image:url(./icons/adobephotoshop.svg);-webkit-mask-image:url(./icons/adobephotoshop.svg)}
+.icon-maya{mask-image:url(./icons/autodeskmaya.svg);-webkit-mask-image:url(./icons/autodeskmaya.svg)}
+.icon-ae{mask-image:url(./icons/adobeaftereffects.svg);-webkit-mask-image:url(./icons/adobeaftereffects.svg)}
+.icon-zbrush{mask-image:url(./icons/zbrush.svg);-webkit-mask-image:url(./icons/zbrush.svg)}
+.about-sub{display:flex;flex-direction:column;gap:7px;margin-top:26px}
+.about-label-small{font-size:11px;letter-spacing:0.14em;color:rgba(230,225,216,0.6)}
+.about-sub-copy{font-size:14.5px;line-height:1.6;color:rgba(230,225,216,0.72)}
+.about-sub-copy-dim{font-size:13.5px;line-height:1.65;color:rgba(230,225,216,0.58);text-wrap:pretty}
+
+/* Experience — deliberately restrained. The work is the argument; this is a
+   credit list, not a CV. Three rows, no prose. */
+.experience{padding:clamp(48px,7vw,96px) clamp(20px,4vw,56px);border-top:1px solid rgba(230,225,216,0.16)}
+.experience-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:clamp(14px,3vw,28px);margin-bottom:clamp(22px,3vw,34px)}
+.experience-title{font-weight:700;font-size:13px;letter-spacing:0.14em;color:rgba(230,225,216,0.65)}
+/* 0.6 (5.86:1), not 0.5 — 0.5 computes to 4.34:1 and fails AA at 13px/400. */
+.experience-intro{margin:0;font-size:13px;color:rgba(230,225,216,0.6)}
+.creditlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.creditlist li{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px clamp(18px,3vw,40px);
+  padding:13px 0;border-top:1px solid rgba(230,225,216,0.08)}
+.creditlist li:first-child{border-top:0}
+.cl-when{flex:0 0 auto;min-width:72px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;color:#FF7A1A}
+.cl-what{flex:1 1 260px;min-width:0;font-size:16px;font-weight:700;color:rgba(230,225,216,0.92)}
+.cl-where{flex:0 1 auto;font-size:13px;color:rgba(230,225,216,0.6)}
+.creditlist-edu{margin-top:clamp(20px,3vw,30px);padding-top:clamp(16px,2.5vw,24px);border-top:1px solid rgba(230,225,216,0.14)}
+.creditlist-edu .cl-what{font-size:14.5px;font-weight:600;color:rgba(230,225,216,0.8)}
+
+/* Copy still to be supplied — visibly marked so it can't ship unnoticed. */
+.copy-todo{margin:clamp(28px,4vw,44px) 0 0;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.8;
+  color:rgba(230,225,216,0.6);max-width:70ch;border-left:2px solid rgba(255,122,26,0.4);padding-left:14px}
+
+/* Contact */
+/* Contact — the page's closing beat, and previously the most colourless
+   section on it. The green ambient wash carries the GT-002 accent all the way
+   to the ask, and TOUCH is stroked in it rather than plain off-white. */
+.contact{position:relative;padding:clamp(56px,9vw,120px) clamp(20px,4vw,56px) 40px;border-top:1px solid rgba(230,225,216,0.16);overflow:hidden}
+.contact::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(70% 60% at 18% 34%, rgba(255,122,26,0.16) 0%, rgba(255,122,26,0) 68%)}
+.contact > *{position:relative}
+.contact-title{font-weight:900;font-size:clamp(44px,9vw,140px);line-height:0.92;font-variation-settings:'wdth' 122}
+.contact-title-outline{font-weight:800;color:transparent;-webkit-text-stroke:1.5px #FF7A1A}
+/* Without a fill fallback, "TOUCH" is invisible on engines lacking text-stroke. */
+@supports not ((-webkit-text-stroke: 1px red) or (text-stroke: 1px red)){
+  .contact-title-outline{color:#FF7A1A}
+}
+.contact-links{display:flex;flex-wrap:wrap;gap:clamp(24px,5vw,72px);margin-top:48px;font-size:clamp(17px,1.4vw,21px)}
+.contact-link{display:flex;align-items:baseline;gap:14px;padding-bottom:6px;border-bottom:1px solid rgba(230,225,216,0.28);transition:border-color 0.5s cubic-bezier(0.22,1,0.36,1)}
+.contact-link:hover{border-color:#FF7A1A}
+.contact-icon{display:flex;align-items:center;align-self:center;color:#FF7A1A}
+.contact-icon-text{font-weight:900;font-size:16px;color:#FF7A1A}
+.footer-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-top:72px;padding-top:20px;border-top:1px solid rgba(230,225,216,0.16);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;color:rgba(230,225,216,0.58)}
+.footer-text{font-family:'Archivo',sans-serif}

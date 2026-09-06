@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Youssef Hesham | Automotive CGI, Product Visualization, Concept Design</title>
+<meta name="description" content="Youssef Hesham. Automotive CGI, product visualization and concept design, from Cairo. Cars, products and ideas turned into something you can see, feel and believe.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+/* Reveal-on-scroll is gated on .js so a JS-off visitor never sees hidden content.
+   But the hiding rule lives in the stylesheet and the un-hiding lives in
+   script.js, so a stale, blocked or throwing script.js would leave the whole page
+   blank. This failsafe clears the hidden state directly with inline styles rather
+   than by toggling a class, because a class-based rescue depends on the very
+   stylesheet that may itself be stale. */
+document.documentElement.classList.add("js");
+setTimeout(function () {
+  if (window.__revealsReady) return;
+  document.documentElement.classList.add("reveals-failed");
+  var els = document.querySelectorAll("[data-reveal]");
+  for (var i = 0; i < els.length; i++) {
+    els[i].style.opacity = "1";
+    els[i].style.transform = "none";
+    els[i].style.transition = "none";
+  }
+}, 1500);
+</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- Glass refraction for the nav: a symmetric cylindrical lens edge.
+     The displacement map is built from two ramps, never from noise.
+       V - vertical: 0 through the middle of the bar, rising to 1 at the top and
+           bottom rims. feFlood fills the filter region, so blurring it vertically
+           leaves a falloff at the region boundary; inverting that alpha puts the
+           strength at the edges. This is the profile of the reference ramp.
+       H - horizontal: one flood shifted half the bar's width and blurred, giving a
+           monotonic gradient whose neutral point sits on the centre line.
+     R = H*V - 0.5V + 0.5, so x-displacement is proportional to distance from the
+     bar's centre but scaled by the vertical edge ramp: content stretches along x at
+     the top and bottom rims and is untouched through the middle.
+     G is forced to a hard 0.5, so there is no vertical displacement at all.
+
+     The H values are measured, not guessed. Rasterising this filter to a canvas and
+     reading the pixel row gives 255 -> 126 at 49.7% -> 0, with a mirror error of
+     2/255 about the centre. dx and stdDeviation were tuned against that readout:
+     wider blurs drift the neutral point and flatten the range.
+
+     primitiveUnits="objectBoundingBox" makes every length a fraction of the element,
+     so the ramp centres itself at any viewport width. With fixed pixel offsets the
+     neutral point slid off-centre on narrower screens and the bend became one-sided.
+
+     Every intermediate is forced opaque before use. feColorMatrix un-premultiplies
+     before it applies, so any input with alpha below 1 silently corrupts the ramp.
+
+     Rejected: a two-ramp difference (L - R) for symmetry. Measured, it never crossed
+     neutral at all - the left half saturated at 255 - because blurring a flood also
+     produces falloff at the filter region's own edge, so each "ramp" is really a
+     bump. One ramp, measured, is both simpler and correct.
+
+     feImage would be the obvious way to supply the map, but it silently no-ops
+     inside backdrop-filter in Chrome, so the map is synthesised from primitives. -->
+<svg class="filter-defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <filter id="nav-glass" x="0%" y="0%" width="100%" height="100%"
+          primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB">
+    <feFlood flood-color="#000000" flood-opacity="1" result="blk"/>
+    <feFlood flood-color="#ffffff" flood-opacity="1" result="wht"/>
+
+    <feGaussianBlur in="wht" stdDeviation="0 0.10" result="vsoft"/>
+    <feComponentTransfer in="vsoft" result="vinv">
+      <feFuncA type="table" tableValues="1 0"/>
+    </feComponentTransfer>
+    <feComposite in="vinv" in2="blk" operator="over" result="V"/>
+
+    <feOffset in="wht" dx="-0.5" result="hshift"/>
+    <feGaussianBlur in="hshift" stdDeviation="0.10 0" result="hsoft"/>
+    <feComposite in="hsoft" in2="blk" operator="over" result="H"/>
+
+    <feComposite in="H" in2="V" operator="arithmetic" k1="1" k2="0" k3="-0.5" k4="0.5" result="ramp"/>
+    <feColorMatrix in="ramp" type="matrix" result="map"
+      values="1 0 0 0 0
+              0 0 0 0 0.5
+              0 0 0 0 0
+              0 0 0 0 1"/>
+
+    <feDisplacementMap in="SourceGraphic" in2="map" scale="0.14" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+<div class="page">
+  <div class="grain"></div>
+
+  <nav class="nav">
+    <a href="#work" class="logo">YOUSSEF HESHAM</a>
+    <span class="spacer"></span>
+    <div class="nav-links">
+      <a href="#work">WORK</a>
+      <a href="#about">ABOUT</a>
+      <a href="#contact">CONTACT</a>
+    </div>
+  </nav>
+
+  <header id="gt-002-film" class="hero-film">
+    <div class="fill">
+      <!-- Drop the real GT-002 loop here as: <source src="gt-002-loop.mp4" type="video/mp4"> -->
+      <video class="hero-video" muted loop playsinline aria-hidden="true" poster="uploads/gt002-hero.jpg"></video>
+      <img class="tile-img" src="uploads/gt002-hero.jpg" alt="GT-002 concept car in silhouette against a red wall bearing the GT-002 wordmark" fetchpriority="high" decoding="async">
+    </div>
+    <div class="hero-film-darken"></div>
+    <div class="hero-film-vignette"></div>
+  </header>
+
+  <section class="intro">
+    <h1 class="intro-name" data-reveal>YOUSSEF HESHAM</h1>
+    <div class="intro-tag" data-reveal style="--d:80ms">AUTOMOTIVE CGI · PRODUCT VISUALIZATION · CONCEPT DESIGN</div>
+    <p class="intro-copy" data-reveal style="--d:160ms">Cars, products, ideas. Some start as a sketch, some as a CAD file, some barely exist at all. I turn them into something you can see, feel and believe.</p>
+  </section>
+
+  <section id="work" class="work">
+    <h2 class="work-heading" data-reveal>SELECTED WORK</h2>
+
+    <div class="tile tile-gt002">
+      <div class="fill"><img class="tile-img" src="uploads/gt002-intro.jpg" alt="GT-002 concept car at three quarter view, green paint against a red background" loading="lazy" decoding="async"></div>
+      <div class="tile-gt002-shade"></div>
+      <div class="tile-gt002-glow"></div>
+      <div class="tile-gt002-copy" data-reveal>
+        <div class="tile-gt002-badge">BEHANCE 3D MOTION FEATURE</div>
+        <h3 class="tile-gt002-title">GT-002</h3>
+        <div class="tile-gt002-desc">An original automotive concept film, made against the grain of sterile digital design.</div>
+        <div class="tile-gt002-links">
+          <a href="GT-002 Case Study.html" class="link-case-study">Read the case study</a>
+          <a href="https://www.behance.net/gallery/245943795/GT-002-Automotive-Concept-Design-Cinematic-CGI" target="_blank" rel="noopener noreferrer" class="link-watch-film">Watch the film <span class="archive-arrow" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="split split-right">
+      <div class="split-copy split-copy-right" data-reveal>
+        <span class="split-eyebrow">THNYAN</span>
+        <h3 class="split-title" style="color:#e8b04b">ASTON</h3>
+        <div class="split-desc">A fragrance line for THNYAN, our in-house brand. I led the concept development, art direction and the full CGI production.</div>
+      </div>
+      <div data-reveal="fade" class="split-media hover-brighten" style="--bloom:url('uploads/aston.jpg')">
+        <div class="fill"><img class="tile-img" src="uploads/aston.jpg" alt="THNYAN ASTON eau de parfum bottle on stacked wood with drifting smoke" loading="lazy" decoding="async"></div>
+        <a href="https://www.behance.net/gallery/253152793/THNYAN-ASTON-CGI-Product-Advertising" target="_blank" rel="noopener noreferrer" class="tile-link" aria-label="THNYAN ASTON on Behance (opens in a new tab)"><span class="tile-arrow" aria-hidden="true">↗</span></a>
+        <div class="split-media-shade split-media-shade-warm"></div>
+      </div>
+    </div>
+
+    <div class="split split-left">
+      <div class="split-copy split-copy-left" data-reveal>
+        <span class="split-eyebrow">THNYAN</span>
+        <h3 class="split-title" style="color:#6DC7EA">ORIGINS <span class="title-line">COLLECTION</span></h3>
+        <div class="split-desc split-desc-wide">Product visualization for THNYAN&rsquo;s Origins Collection. Every fragrance gets its own environment, built so each one lands in a material world of its own. Full CGI throughout: modeling, look development, lighting, rendering and compositing. Concept and art direction developed in-house.</div>
+      </div>
+      <div data-reveal="fade" class="split-media hover-brighten-contrast" style="--bloom:url('uploads/origins.jpg')">
+        <div class="fill"><img class="tile-img" src="uploads/origins.jpg" alt="THNYAN Origins Collection bottle set into cracked blue ice" loading="lazy" decoding="async"></div>
+        <a href="https://www.behance.net/gallery/254640459/THNYAN-Origins-Collection-CGI-Product-Advertising" target="_blank" rel="noopener noreferrer" class="tile-link" aria-label="THNYAN Origins Collection on Behance (opens in a new tab)"><span class="tile-arrow" aria-hidden="true">↗</span></a>
+        <div class="split-media-shade split-media-shade-cool"></div>
+      </div>
+    </div>
+
+    <div class="concepts">
+      <div class="concepts-heading" data-reveal>
+        <h2 class="concepts-title">SELECTED AUTOMOTIVE CONCEPTS</h2>
+        <div class="concepts-desc">A multi-year arc of original vehicle design, from first sketch package to finished render.</div>
+      </div>
+      <div class="concepts-grid">
+        <div class="concept-tile concept-tile-hh" data-reveal style="--d:0ms">
+          <img class="tile-img" src="uploads/hh1001.jpg" alt="HH-1001 concept car in red, side view on a woodland road" style="object-position:center 54%" loading="lazy" decoding="async">
+          <div class="concept-label">HH-1001</div>
+          <a href="https://www.behance.net/gallery/199717431/HH-1001-Automotive-Concept-Design-CGI" target="_blank" rel="noopener noreferrer" class="tile-link" aria-label="HH-1001 on Behance (opens in a new tab)"><span class="tile-arrow" aria-hidden="true">↗</span></a>
+        </div>
+        <div class="concept-tile concept-tile-s" data-reveal style="--d:90ms">
+          <img class="tile-img" src="uploads/s1002.jpg" alt="S-1002 concept car in blue, drifting at night through blurred city lights" style="object-position:center 64%" loading="lazy" decoding="async">
+          <div class="concept-label">S-1002</div>
+          <a href="https://www.behance.net/gallery/171923157/S-1002-Automotive-Concept-Design-CGI" target="_blank" rel="noopener noreferrer" class="tile-link" aria-label="S-1002 on Behance (opens in a new tab)"><span class="tile-arrow" aria-hidden="true">↗</span></a>
+        </div>
+        <div class="concept-tile concept-tile-ls" data-reveal style="--d:180ms">
+          <img class="tile-img" src="uploads/ls1001.jpg" alt="LS-1001 concept car in black, rear view under an overcast sky" style="object-position:center 58%" loading="lazy" decoding="async">
+          <div class="concept-label">LS-1001</div>
+          <a href="https://www.behance.net/gallery/205306535/LS-1001-Automotive-Concept-Design-CGI" target="_blank" rel="noopener noreferrer" class="tile-link" aria-label="LS-1001 on Behance (opens in a new tab)"><span class="tile-arrow" aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="split split-daftpunk">
+      <div class="split-copy split-copy-center" data-reveal>
+        <h3 class="split-title">DAFT PUNK</h3>
+        <div class="split-desc">A personal project, built end to end. Modeling, materials, shaders, lighting and rigging.</div>
+      </div>
+      <div data-reveal="fade" class="split-media" style="--bloom:url('uploads/daftpunk.jpg')">
+        <div class="fill"><img class="tile-img" src="uploads/daftpunk.jpg" alt="Daft Punk gold helmet seen from behind over a sequinned jacket" loading="lazy" decoding="async"></div>
+        <a href="https://www.behance.net/gallery/212155959/Daft-Punk-Character-Art" target="_blank" rel="noopener noreferrer" class="tile-link" aria-label="Daft Punk on Behance (opens in a new tab)"><span class="tile-arrow" aria-hidden="true">↗</span></a>
+        <div class="split-media-shade split-media-shade-dark"></div>
+      </div>
+    </div>
+
+    <div id="more" class="archive">
+      <!-- One honest destination, not four labels sharing a URL. Behance is
+           already curated into Product / Automotive / Character sections, so
+           the site points there rather than re-creating that split here. -->
+      <a href="https://www.behance.net/youssefhf" target="_blank" rel="noopener noreferrer" class="archive-band" data-reveal>
+        <div class="archive-band-copy">
+          <h2 class="archive-title">THE FULL ARCHIVE</h2>
+          <p class="archive-desc">Seven years of product, automotive and character work, organized and kept current on Behance.</p>
+        </div>
+        <span class="archive-cta">behance.net/youssefhf <span class="archive-arrow" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></span>
+      </a>
+    </div>
+  </section>
+
+  <section id="about" class="about">
+    <div class="about-main" data-reveal>
+      <h2 class="about-heading"><span class="title-line">Seven years turning ideas</span> <span class="title-line">into things you can</span> <span class="about-heading-dim">almost touch.</span></h2>
+      <p class="about-copy">Automotive CGI, product visualization, character work and concept design, shaped by a background in architectural engineering and years of hands-on 3D. I lead the THNYAN creative team at Five Brothers Marketing in Cairo.</p>
+      <p class="about-copy about-copy-secondary">I care about what makes an image feel physical. The weight of a form, the way a surface catches light, what stays hidden, and how much detail is enough.</p>
+    </div>
+
+    <div class="about-side" data-reveal style="--d:120ms">
+      <div class="about-location">
+        <span class="about-location-city">Cairo, Egypt</span>
+        <span class="about-location-line">Working worldwide · GMT+3</span>
+        <span class="about-location-line">Open to full-time &amp; selected freelance</span>
+      </div>
+      <div class="about-programs">
+        <span class="about-label">MAIN PROGRAMS</span>
+        <div class="about-programs-list">
+          <div class="about-program"><span aria-hidden="true" class="icon icon-blender"></span><span>Blender</span></div>
+          <div class="about-program"><span aria-hidden="true" class="icon icon-photoshop"></span><span>Photoshop</span></div>
+          <div class="about-program"><span aria-hidden="true" class="icon icon-maya"></span><span>Maya</span></div>
+          <div class="about-program"><span aria-hidden="true" class="icon icon-ae"></span><span>After Effects</span></div>
+          <div class="about-program"><span aria-hidden="true" class="icon icon-zbrush"></span><span>ZBrush</span></div>
+        </div>
+        <div class="about-sub">
+          <span class="about-label about-label-small">RENDERING</span>
+          <span class="about-sub-copy">OctaneRender, mostly. Cycles and Arnold when a pipeline calls for it.</span>
+        </div>
+        <div class="about-sub">
+          <span class="about-label about-label-small">PROCEDURAL &amp; CAD</span>
+          <span class="about-sub-copy">Geometry Nodes, Rhino, AutoCAD</span>
+        </div>
+        <div class="about-sub">
+          <span class="about-label about-label-small">AI-ASSISTED PRODUCTION</span>
+          <span class="about-sub-copy about-sub-copy-dim">Higgsfield, Magnific, Adobe Firefly, ElevenLabs</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience" class="experience">
+    <div class="experience-head">
+      <h2 class="experience-title">EXPERIENCE</h2>
+      <p class="experience-intro">Seven years, Cairo.</p>
+    </div>
+
+    <ol class="creditlist">
+      <li><span class="cl-when">2026 →</span><span class="cl-what">Acting Creative Team Lead</span><span class="cl-where">Five Brothers Marketing, Cairo</span></li>
+      <li><span class="cl-when">2025 →</span><span class="cl-what">3D Artist</span><span class="cl-where">Five Brothers Marketing, Cairo</span></li>
+      <li><span class="cl-when">2019 →</span><span class="cl-what">Freelance CGI Artist &amp; Designer</span><span class="cl-where">Independent, remote</span></li>
+    </ol>
+
+    <ol class="creditlist creditlist-edu">
+      <li><span class="cl-when">2018 to 2023</span><span class="cl-what">B.Sc. Architectural Engineering</span><span class="cl-where"><abbr title="Arab Academy for Science, Technology and Maritime Transport">AASTMT</abbr></span></li>
+      <li><span class="cl-when">2027</span><span class="cl-what">MBA Candidate, Marketing Management</span><span class="cl-where"><abbr title="Arab Academy for Science, Technology and Maritime Transport">AASTMT</abbr>, expected</span></li>
+    </ol>
+  </section>
+
+  <section id="contact" class="contact">
+    <h2 class="contact-title" data-reveal>GET IN<span class="sr-only"> TOUCH</span></h2>
+    <div class="contact-title contact-title-outline" aria-hidden="true" data-reveal style="--d:90ms">TOUCH</div>
+    <div class="contact-links" data-reveal style="--d:180ms">
+      <a href="mailto:youssof.hesham@gmail.com" class="contact-link">
+        <span class="contact-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15"></rect><path d="M2.5 5.5 12 13.5 21.5 5.5"></path></svg></span>
+        <span>youssof.hesham@gmail.com</span>
+      </a>
+      <a href="https://www.behance.net/youssefhf" class="contact-link" target="_blank" rel="noopener noreferrer">
+        <span class="contact-icon contact-icon-text">Bē</span>
+        <span>behance.net/youssefhf</span><span class="contact-arrow" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span>
+      </a>
+      <a href="https://linkedin.com/in/youssefhf" target="_blank" rel="noopener noreferrer" class="contact-link">
+        <span class="contact-icon contact-icon-text">in</span>
+        <span>linkedin.com/in/youssefhf</span><span class="contact-arrow" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span>
+      </a>
+      <a href="https://instagram.com/youssefhf_/" target="_blank" rel="noopener noreferrer" class="contact-link">
+        <span class="contact-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2.5" y="2.5" width="19" height="19" rx="5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"></circle></svg></span>
+        <span>instagram.com/youssefhf_</span><span class="contact-arrow" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span>
+      </a>
+    </div>
+    <div class="footer-row">
+      <span class="footer-text">© 2026 YOUSSEF HESHAM</span>
+      <span class="footer-text">AUTOMOTIVE CGI · PRODUCT VISUALIZATION · CONCEPT DESIGN</span>
+    </div>
+  </section>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
