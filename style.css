@@ -388,6 +388,30 @@ html{scroll-behavior:smooth}
      the GT-002 lettering that carries the shot. 3/2 shows ~84% of it. */
   .hero-film{height:auto;aspect-ratio:3/2}
 
+  /* ASTON, Origins and Daft Punk keep their copy BESIDE the image rather than
+     stacking. The rows stay horizontal, the media takes a 3/4 portrait crop and
+     the copy fills the rest, so the alternating left/right rhythm survives on a
+     phone. Type steps down to fit a ~180px column. */
+  /* flex-start, not stretch: a stretched item ignores aspect-ratio, so the media
+     was being pulled to whatever height the copy column needed. */
+  .split{flex-wrap:nowrap;align-items:flex-start}
+  .split-media,
+  .split-left .split-media,
+  .split-daftpunk .split-media{flex:0 0 52%;min-width:0;height:auto;aspect-ratio:3/4}
+  .split-copy,
+  .split-copy-center{flex:1 1 0;min-width:0;justify-content:center;gap:8px}
+  .split-copy-right{padding:18px 16px 18px 14px}
+  .split-copy-left,
+  .split-copy-center{padding:18px 14px 18px 16px}
+  .split-eyebrow{font-size:10.5px;letter-spacing:0.14em;margin-bottom:4px}
+  /* 'wdth' 118 widens the face enough that ORIGINS COLLECTION overran a 180px
+     column; drop to normal width and a smaller size here. */
+  .split-title{font-size:19px;line-height:1.02;font-variation-settings:'wdth' 100}
+  .split-daftpunk .split-title{font-size:17px}
+  .split-desc,
+  .split-desc-wide{font-size:12.5px;line-height:1.5;max-width:none}
+  .split-daftpunk .split-desc{font-size:12px}
+
   /* The GT-002 tile goes full-bleed at the render's own ratio. At ~211px tall a
      48px title cannot sit on top of it, so the copy moves below the image. */
   .tile-gt002{height:auto;overflow:visible}
