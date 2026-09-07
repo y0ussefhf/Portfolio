@@ -58,13 +58,6 @@ html{scroll-behavior:smooth}
 .eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.14em;color:#FF7A1A;margin-bottom:12px}
 .hero-title{font-weight:900;font-size:clamp(52px,9vw,140px);line-height:0.9;font-variation-settings:'wdth' 122}
 .hero-credit{position:absolute;right:clamp(20px,4vw,56px);bottom:40px;pointer-events:none;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;color:rgba(239,233,223,0.65);line-height:1.9}
-/* Below ~640px the title's clamp still spans the full container, so a
-   bottom-right-anchored credit lands on top of the GT-002 glyphs. Lift it
-   clear of the title band and left-align it with the rest of the hero copy. */
-@media (max-width:640px){
-  .hero-credit{right:auto;left:clamp(20px,4vw,56px);bottom:auto;top:calc(100% - 190px);text-align:left;line-height:1.7}
-  .hero-copy{bottom:28px}
-}
 
 .section-num{flex:0 0 auto;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.16em;color:#FF7A1A}
 .section-num-red{color:#ff6b5a}
@@ -125,3 +118,21 @@ html{scroll-behavior:smooth}
 .footer{padding:clamp(40px,6vw,72px) clamp(20px,4vw,56px);display:flex;flex-wrap:wrap;gap:24px;align-items:baseline;justify-content:space-between}
 .footer-back{font-weight:900;font-size:clamp(24px,3vw,40px);font-variation-settings:'wdth' 118}
 .footer-mail{font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:0.1em}
+
+/* --- Mobile: same crop problem on this page --------------------------------
+   The film and the frames are all 16/9 in tall boxes, so phones were showing
+   about a quarter of each. Boxes take the footage's own ratio here, and the
+   hero copy moves below the film rather than sitting over a 211px frame. */
+@media (max-width:768px){
+  .hero{height:auto}
+  .hero .fill{position:relative;inset:auto;aspect-ratio:16/9;overflow:hidden}
+  /* the cover-crop sizing exists to fill a tall hero; at 16/9 it just fits */
+  .hero-video-embed{position:absolute;top:0;left:0;transform:none;
+    width:100%;height:100%;min-width:0;min-height:0}
+  .hero-shade{display:none}
+  .hero-copy{position:static;padding:22px clamp(20px,4vw,56px) 0}
+  .hero-credit{position:static;right:auto;left:auto;top:auto;bottom:auto;
+    text-align:left;padding:12px clamp(20px,4vw,56px) 26px}
+  .split-media{min-height:0;aspect-ratio:16/9}
+  .inversion-tile{height:auto;aspect-ratio:16/9}
+}

@@ -374,3 +374,44 @@ html{scroll-behavior:smooth}
 .contact-icon-text{font-weight:900;font-size:16px;color:#FF7A1A}
 .footer-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-top:72px;padding-top:20px;border-top:1px solid rgba(230,225,216,0.16);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;color:rgba(230,225,216,0.58)}
 .footer-text{font-family:'Archivo',sans-serif}
+
+/* --- Mobile: stop the renders being gutted by the crop ---------------------
+   Measured at 375px, the tiles showed only 24-35% of each image. The boxes kept
+   their desktop proportions while the width collapsed, so 16/9 renders in tall
+   boxes lost ~70% horizontally and the portrait concept shots lost up to 76%
+   vertically in a 160px-tall strip. Giving each box an aspect-ratio close to its
+   own image leaves object-fit:cover almost nothing to crop.
+   Media also goes full-bleed here: the flex min-widths were leaving ~55px of
+   dead page beside each image on a 375px screen. */
+@media (max-width:768px){
+  .split-media,
+  .split-left .split-media,
+  .split-daftpunk .split-media{flex:1 1 100%;min-width:100%}
+
+  /* The page hero is the same 16/9 frame in a 92vh box: 28% visible, and the
+     part it kept was the middle - cutting the GT-002 lettering that carries the
+     shot. 3/2 keeps a banner-like height while showing ~84% of the frame. */
+  .hero-film{height:auto;aspect-ratio:3/2}
+
+  /* GT-002 is a 16/9 frame in an 860px-tall box: 28% visible. At full ratio the
+     frame is only ~211px tall, far too short to overlay a 48px title on, so the
+     copy moves below the image instead of sitting over it. */
+  .tile-gt002{height:auto;overflow:visible}
+  .tile-gt002 .fill{position:relative;inset:auto;aspect-ratio:16/9;overflow:hidden}
+  .tile-gt002-copy{position:static;padding:22px clamp(20px,4vw,56px) 30px;pointer-events:auto}
+
+  /* ASTON is a portrait render; its own 9/16 shows it whole. */
+  .split-right .split-media{height:auto;aspect-ratio:9/16}
+
+  /* Origins, 16/9: was 35% visible. */
+  .split-left .split-media{height:auto;aspect-ratio:16/9}
+
+  /* Concept tiles: portrait renders crushed into a 160px strip, 24-34% visible.
+     4/5 shows HH-1001 and LS-1001 whole and lifts S-1002 from 24% to ~70%,
+     while keeping the three tiles a consistent height. */
+  .concept-tile{height:auto;aspect-ratio:4/5}
+
+  /* Daft Punk is a 4/1 panoramic: was 33% visible. 3/1 keeps a usable height
+     while showing ~75% - and the helmet sits centred, so what goes is background. */
+  .split-daftpunk .split-media{height:auto;aspect-ratio:3/1}
+}
