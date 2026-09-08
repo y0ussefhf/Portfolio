@@ -42,14 +42,23 @@ function initNavState() {
   if (!sections.length) return;
 
   var visible = Object.create(null);
+  var lastCurrent = null;
 
   function render() {
-    // Topmost section currently in view wins, so passing a short section
-    // does not leave two links lit at once.
+    // The DEEPEST section currently in the band wins - the one you have most
+    // recently scrolled into. Picking the topmost instead looks reasonable but
+    // is wrong here: #work is enormous and is still inside the band at the exact
+    // offset an #about anchor lands on, so clicking ABOUT scrolled correctly but
+    // left the underline on WORK.
     var current = null;
     sections.forEach(function (s) {
-      if (visible[s.el.id] && (!current || s.el.offsetTop < current.el.offsetTop)) current = s;
+      if (visible[s.el.id] && (!current || s.el.offsetTop > current.el.offsetTop)) current = s;
     });
+    // Between two sections nothing is in the band, which blinked the indicator
+    // off mid-scroll. Hold the last one instead. Before the first section is
+    // reached lastCurrent is still null, so the nav correctly shows nothing.
+    if (!current) current = lastCurrent;
+    lastCurrent = current;
     sections.forEach(function (s) {
       if (current && s === current) s.link.setAttribute("aria-current", "true");
       else s.link.removeAttribute("aria-current");
