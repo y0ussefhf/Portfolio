@@ -23,15 +23,19 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-// Active-section state for the sticky nav. The page is ~6700px tall with three
+// Active-section state for the sticky nav. The page is ~6800px tall with three
 // anchored sections; without this there is no cue as to where you are.
-// IntersectionObserver rather than a scroll handler so it costs nothing per frame.
-// Run now if the DOM is already parsed, otherwise wait. A bare
-// DOMContentLoaded listener silently no-ops when the script loads late
-// (deferred, async, or injected), which is easy to mistake for broken code.
+//
+// This was an IntersectionObserver watching a band across the upper part of the
+// viewport, which is cheaper but is wrong for the LAST section: #contact is
+// ~690px tall and sits at the very end of the document, so once the page is
+// scrolled as far as it goes, #contact still starts below the band on any
+// viewport taller than about 1240px. It could never light up. Deciding from the
+// scroll offset instead costs three rectangle reads per scroll event, which is
+// nothing, and it cannot fail that way.
 function initNavState() {
   var links = Array.prototype.slice.call(document.querySelectorAll(".nav-links a[href^='#']"));
-  if (!links.length || !("IntersectionObserver" in window)) return;
+  if (!links.length) return;
 
   var sections = links
     .map(function (a) {
@@ -41,37 +45,61 @@ function initNavState() {
     .filter(Boolean);
   if (!sections.length) return;
 
-  var visible = Object.create(null);
-  var lastCurrent = null;
+  // Where the page is measured from: a line a little below the top of the
+  // viewport. It has to clear the sections' 72px scroll-margin-top by a real
+  // margin, not a couple of pixels - clicking ABOUT lands 72px above the
+  // section, and a lazy image loading in at that moment moves the target enough
+  // to miss a tight threshold, leaving the wrong link underlined until the next
+  // scroll. Never less than 96px, and a fifth of the viewport on taller screens.
+  function probeLine() {
+    return Math.max(96, Math.min(0.2 * window.innerHeight, 200));
+  }
+  var activeLink = null;
 
-  function render() {
-    // The DEEPEST section currently in the band wins - the one you have most
-    // recently scrolled into. Picking the topmost instead looks reasonable but
-    // is wrong here: #work is enormous and is still inside the band at the exact
-    // offset an #about anchor lands on, so clicking ABOUT scrolled correctly but
-    // left the underline on WORK.
+  function apply() {
+    var y = window.pageYOffset;
+    var max = document.documentElement.scrollHeight - window.innerHeight;
     var current = null;
-    sections.forEach(function (s) {
-      if (visible[s.el.id] && (!current || s.el.offsetTop > current.el.offsetTop)) current = s;
-    });
-    // Between two sections nothing is in the band, which blinked the indicator
-    // off mid-scroll. Hold the last one instead. Before the first section is
-    // reached lastCurrent is still null, so the nav correctly shows nothing.
-    if (!current) current = lastCurrent;
-    lastCurrent = current;
-    sections.forEach(function (s) {
-      if (current && s === current) s.link.setAttribute("aria-current", "true");
-      else s.link.removeAttribute("aria-current");
-    });
+
+    if (max > 0 && y >= max - 2) {
+      // Resting against the end of the document. Whatever the arithmetic says,
+      // the reader is looking at the last section - it is the only thing that
+      // can be on screen down here, and on a tall viewport it is not tall
+      // enough to reach any threshold further up.
+      current = sections[sections.length - 1];
+    } else {
+      var probe = y + probeLine();
+      sections
+        .map(function (s) {
+          return { s: s, top: s.el.getBoundingClientRect().top + y };
+        })
+        .sort(function (a, b) { return a.top - b.top; })
+        .forEach(function (r) { if (r.top <= probe) current = r.s; });
+    }
+
+    // Above the first section nothing is current, which is right: the hero and
+    // the intro belong to no nav item.
+    var link = current ? current.link : null;
+    if (link === activeLink) return;
+    if (activeLink) activeLink.removeAttribute("aria-current");
+    if (link) link.setAttribute("aria-current", "true");
+    activeLink = link;
   }
 
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) { visible[e.target.id] = e.isIntersecting; });
-    render();
-  }, { rootMargin: "-64px 0px -55% 0px" });
-
-  sections.forEach(function (s) { io.observe(s.el); });
+  // Called straight from the scroll event rather than deferred to
+  // requestAnimationFrame. rAF is throttled or skipped outright in some
+  // contexts, and a deferred version that guards itself with an "already
+  // queued" flag stops updating for good if that callback never arrives.
+  // Three rectangle reads on a scroll event, and no DOM write unless the
+  // answer actually changed, is cheap enough not to need the indirection.
+  window.addEventListener("scroll", apply, { passive: true });
+  window.addEventListener("resize", apply);
+  window.addEventListener("load", apply);
+  apply();
 }
+// Run now if the DOM is already parsed, otherwise wait. A bare
+// DOMContentLoaded listener silently no-ops when the script loads late
+// (deferred, async, or injected), which is easy to mistake for broken code.
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", initNavState);
 } else {
@@ -127,4 +155,67 @@ window.__revealsReady = true;
   } else {
     safeInit();
   }
+})();
+
+
+// Re-apply an incoming #fragment once layout has settled.
+//
+// The browser honours index.html#contact while the document is still parsing -
+// before the webfont swaps and before the lazy images below the fold have taken
+// up their space. Those land afterwards, everything below shifts, and the
+// visitor ends up somewhere arbitrary. On a cold load #contact left them near
+// the top of the page: the contact section never came into view, so its reveals
+// never fired and the email and social links stayed at opacity 0. It looked
+// like the content was missing rather than simply off screen.
+//
+// So jump again when the page has finished loading - but only if the visitor
+// has not scrolled themselves in the meantime, so this never yanks the page out
+// from under someone who has started reading.
+(function () {
+  var hash = window.location.hash;
+  if (!hash || hash.length < 2) return;
+
+  var target;
+  try { target = document.getElementById(decodeURIComponent(hash.slice(1))); }
+  catch (e) { return; }
+  if (!target) return;
+
+  var moved = false;
+  function giveUp() {
+    moved = true;
+    window.removeEventListener("wheel", giveUp);
+    window.removeEventListener("touchmove", giveUp);
+    window.removeEventListener("keydown", onKey);
+  }
+  function onKey(e) {
+    var k = e.key;
+    if (k === " " || k === "Home" || k === "End" || k === "PageUp" ||
+        k === "PageDown" || (k && k.indexOf("Arrow") === 0)) giveUp();
+  }
+  window.addEventListener("wheel", giveUp, { passive: true });
+  window.addEventListener("touchmove", giveUp, { passive: true });
+  window.addEventListener("keydown", onKey);
+
+  function settle() {
+    if (moved) return;
+    // scroll-margin-top keeps the section clear of the sticky nav; honour it
+    // here too, otherwise this correction would land 72px off from where the
+    // browser's own anchor jump puts it.
+    var margin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+    var want = target.getBoundingClientRect().top + window.pageYOffset - margin;
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    if (want > max) want = max;
+    if (want < 0) want = 0;
+    if (Math.abs(window.pageYOffset - want) < 2) return;
+    // Instant, not smooth. This is correcting a jump that already happened, not
+    // starting a new one, and a half-second glide here reads as a glitch.
+    window.scrollTo({ top: want, behavior: "auto" });
+  }
+
+  window.addEventListener("load", function () {
+    settle();
+    // Webfonts swapping in can shift the page one last time after load.
+    setTimeout(settle, 300);
+    setTimeout(giveUp, 1200);
+  });
 })();
