@@ -375,6 +375,17 @@ html{scroll-behavior:smooth}
 .footer-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-top:72px;padding-top:20px;border-top:1px solid rgba(230,225,216,0.16);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;color:rgba(230,225,216,0.58)}
 .footer-text{font-family:'Archivo',sans-serif}
 
+
+/* Target size. The nav links, the logo and "Watch the film" are text links whose
+   hit area is only the text box - 16-20px tall, under the 24x24 minimum in WCAG
+   2.2 (2.5.8). The area is extended with a pseudo-element rather than padding so
+   the nav's baseline alignment and the underline position are untouched. */
+.nav-links a,.logo,.link-watch-film{position:relative}
+.nav-links a::before,
+.logo::before,
+.link-watch-film::before{content:"";position:absolute;left:-8px;right:-8px;
+  top:50%;transform:translateY(-50%);height:44px}
+
 /* --- Mobile ---------------------------------------------------------------
    GT-002 is the flagship and earns a full-bleed frame; everything else keeps
    its inset strip proportions. An earlier pass gave every tile an aspect-ratio
@@ -410,6 +421,16 @@ html{scroll-behavior:smooth}
   .split-daftpunk .split-title{font-size:17px}
   .split-desc,
   .split-desc-wide{font-size:12.5px;line-height:1.5;max-width:none}
+}
+
+/* Below ~360px the copy column is under 130px and COLLECTION overran it by
+   20px at 320. Measured with webfonts loaded, not estimated. */
+@media (max-width:359px){
+  .split-title{font-size:15.5px}
+  .split-daftpunk .split-title{font-size:14.5px}
+  /* The h1's clamp floor is 44px, which is wider than a 265px content box:
+     YOUSSEF overran by 3px at 320. */
+  .intro-name{font-size:38px}
   .split-daftpunk .split-desc{font-size:12px}
 
   /* The GT-002 tile goes full-bleed at the render's own ratio. At ~211px tall a
