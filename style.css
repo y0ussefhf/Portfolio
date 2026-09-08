@@ -284,14 +284,20 @@ html{scroll-behavior:smooth}
 .split-daftpunk{border-top-color:rgba(230,225,216,0.1)}
 .split-daftpunk .split-media{flex:0 1 38%;min-width:min(100%,240px);height:clamp(180px,26vw,300px);transition:filter 0.95s cubic-bezier(0.16,1,0.3,1);filter:brightness(0.82)}
 /* The source is a 4:1 letterbox that is mostly empty studio grey - the figure
-   occupies the middle 21% of it. A 38%-wide panel stretched that to nearly 2:1
-   and carried a lot of that emptiness with it. 4:3 instead, derived from the
-   band height rather than a new height, so the row keeps exactly the rhythm it
-   had. cover then reads the middle third of the file, which contains the whole
-   figure with room on both sides - no object-position needed, it is centred.
+   occupies the middle 21% of it, so a 38%-wide panel stretched to nearly 2:1
+   carried a lot of that emptiness with it. At 4:3, cover reads the middle third
+   of the file, which holds the whole figure with room either side; it is
+   centred in frame, so no object-position is needed. The window into the source
+   is the same at every size - only the panel grows.
+   Height comes from the panel's own width so it keeps scaling with the layout,
+   with align-self overriding the row's stretch (a stretched item ignores
+   aspect-ratio). Capped in the same idiom as the other panels, and deliberately
+   below them - 560x420 against Origins' 528-tall and ASTON's 594 - so a
+   personal project does not outweigh the client work.
    Desktop only: the phone layout keeps its own 3/4. */
 @media (min-width:769px){
-  .split-daftpunk .split-media{flex:0 0 auto;width:auto;aspect-ratio:4/3}
+  .split-daftpunk .split-media{height:auto;aspect-ratio:4/3;align-self:flex-start;
+    max-width:min(70vh,560px)}
 }
 .split-daftpunk .split-media:hover{filter:brightness(1)}
 .split-media-shade-dark{background:radial-gradient(115% 105% at 45% 35%, rgba(6,5,4,0) 36%, rgba(6,5,4,0.8) 100%)}
