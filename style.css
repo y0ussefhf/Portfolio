@@ -224,14 +224,6 @@ html{scroll-behavior:smooth}
    a bare <br> makes screen readers announce "ORIGINSCOLLECTION". */
 .title-line{display:block}
 .split-media{position:relative;z-index:0;flex:0 1 62%;min-width:min(100%,320px);height:min(66vh,604px);transition:filter 1.1s cubic-bezier(0.16,1,0.3,1)}
-/* ASTON is a 9:16 product shot. In a 62%-wide strip it was cropped to roughly
-   3:2, which showed 37% of the frame: the bottle shrank into the middle of a
-   lot of empty brown and the wood plinth ran off the bottom edge. Capping the
-   width holds the panel near square at any screen size - about 56% of the
-   frame - so the product reads at the size it was lit for. */
-@media (min-width:769px){
-  .split-right .split-media{flex:0 1 46%;max-width:660px;height:min(74vh,660px)}
-}
 .split-left .split-media{flex:0 1 52%;min-width:min(100%,300px);height:min(59vh,528px);transition:filter 0.85s cubic-bezier(0.16,1,0.3,1)}
 /* Colour as light, spilling OUT of the image onto the page rather than washing
    over the photograph. The old version laid a low-alpha tint across the render
@@ -273,17 +265,6 @@ html{scroll-behavior:smooth}
 .concepts-desc{font-size:13px;color:rgba(230,225,216,0.6);max-width:44ch}
 .concepts-grid{display:flex;flex-wrap:wrap;gap:2px}
 .concept-tile{flex:1 1 260px;position:relative;height:clamp(160px,22vw,240px);overflow:hidden;transition:filter 0.95s cubic-bezier(0.16,1,0.3,1);filter:brightness(0.9)}
-/* Still three across - but the sources are portrait (4:5, and 9:16 for S-1002)
-   and the fixed 240px band letterboxed them to 2:1, cutting the wheels off
-   HH-1001 and the roofline off S-1002. Tying height to the tile's own width
-   keeps the strip rhythm, puts the whole car in frame, and holds the same crop
-   at every desktop size instead of sliding back into letterbox on a wide
-   monitor. Capped so it cannot dominate an ultrawide. The phone layout above
-   is deliberately left alone. This has to come after the rule it overrides: a
-   media query adds no specificity, so earlier in the file it would lose. */
-@media (min-width:769px){
-  .concept-tile{height:auto;aspect-ratio:3/2;max-height:min(46vh,420px)}
-}
 .concept-tile:hover{filter:brightness(1.06)}
 .concept-tile .img-slot{position:absolute;inset:0}
 
@@ -302,6 +283,16 @@ html{scroll-behavior:smooth}
    automotive/product hero work above. */
 .split-daftpunk{border-top-color:rgba(230,225,216,0.1)}
 .split-daftpunk .split-media{flex:0 1 38%;min-width:min(100%,240px);height:clamp(180px,26vw,300px);transition:filter 0.95s cubic-bezier(0.16,1,0.3,1);filter:brightness(0.82)}
+/* The source is a 4:1 letterbox that is mostly empty studio grey - the figure
+   occupies the middle 21% of it. A 38%-wide panel stretched that to nearly 2:1
+   and carried a lot of that emptiness with it. 4:3 instead, derived from the
+   band height rather than a new height, so the row keeps exactly the rhythm it
+   had. cover then reads the middle third of the file, which contains the whole
+   figure with room on both sides - no object-position needed, it is centred.
+   Desktop only: the phone layout keeps its own 3/4. */
+@media (min-width:769px){
+  .split-daftpunk .split-media{flex:0 0 auto;width:auto;aspect-ratio:4/3}
+}
 .split-daftpunk .split-media:hover{filter:brightness(1)}
 .split-media-shade-dark{background:radial-gradient(115% 105% at 45% 35%, rgba(6,5,4,0) 36%, rgba(6,5,4,0.8) 100%)}
 /* Muted gold — same family as ASTON's #e8b04b but dimmer (6.93:1 vs 10.18:1),
