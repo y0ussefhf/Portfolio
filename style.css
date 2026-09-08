@@ -133,7 +133,13 @@ html{scroll-behavior:smooth}
 .tile-gt002{position:relative;height:min(96vh,860px);overflow:hidden;border-top:1px solid rgba(230,225,216,0.16)}
 .tile-gt002-shade{position:absolute;inset:0;pointer-events:none;background:radial-gradient(110% 100% at 50% 30%, rgba(48,10,6,0) 28%, rgba(30,6,4,0.82) 100%)}
 .tile-gt002-glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(66% 56% at 50% 45%, rgb(var(--gt002) / 0.30) 0%, rgb(var(--gt002) / 0) 72%)}
-.tile-gt002-copy{position:absolute;left:clamp(20px,4vw,56px);bottom:36px;pointer-events:none;display:flex;flex-direction:column;gap:12px}
+.tile-gt002-copy{position:absolute;z-index:4;left:clamp(20px,4vw,56px);bottom:36px;pointer-events:none;display:flex;flex-direction:column;gap:12px}
+/* The whole GT-002 image is a click target for the case study, sitting under
+   the copy so the two visible links keep their own behaviour. It is hidden
+   from assistive tech and skipped in the tab order because "Read the case
+   study" right above it already goes to the same place - this is a bigger
+   mouse target, not a second link. */
+.tile-gt002-link{position:absolute;inset:0;z-index:1;display:block}
 /* Third-party validation on the best-performing piece — stated once, quietly,
    in the accent colour rather than as a loud badge. */
 .tile-gt002-badge{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.16em;color:#FF7A1A;margin-bottom:-2px}
@@ -218,6 +224,14 @@ html{scroll-behavior:smooth}
    a bare <br> makes screen readers announce "ORIGINSCOLLECTION". */
 .title-line{display:block}
 .split-media{position:relative;z-index:0;flex:0 1 62%;min-width:min(100%,320px);height:min(66vh,604px);transition:filter 1.1s cubic-bezier(0.16,1,0.3,1)}
+/* ASTON is a 9:16 product shot. In a 62%-wide strip it was cropped to roughly
+   3:2, which showed 37% of the frame: the bottle shrank into the middle of a
+   lot of empty brown and the wood plinth ran off the bottom edge. Capping the
+   width holds the panel near square at any screen size - about 56% of the
+   frame - so the product reads at the size it was lit for. */
+@media (min-width:769px){
+  .split-right .split-media{flex:0 1 46%;max-width:660px;height:min(74vh,660px)}
+}
 .split-left .split-media{flex:0 1 52%;min-width:min(100%,300px);height:min(59vh,528px);transition:filter 0.85s cubic-bezier(0.16,1,0.3,1)}
 /* Colour as light, spilling OUT of the image onto the page rather than washing
    over the photograph. The old version laid a low-alpha tint across the render
@@ -259,6 +273,17 @@ html{scroll-behavior:smooth}
 .concepts-desc{font-size:13px;color:rgba(230,225,216,0.6);max-width:44ch}
 .concepts-grid{display:flex;flex-wrap:wrap;gap:2px}
 .concept-tile{flex:1 1 260px;position:relative;height:clamp(160px,22vw,240px);overflow:hidden;transition:filter 0.95s cubic-bezier(0.16,1,0.3,1);filter:brightness(0.9)}
+/* Still three across - but the sources are portrait (4:5, and 9:16 for S-1002)
+   and the fixed 240px band letterboxed them to 2:1, cutting the wheels off
+   HH-1001 and the roofline off S-1002. Tying height to the tile's own width
+   keeps the strip rhythm, puts the whole car in frame, and holds the same crop
+   at every desktop size instead of sliding back into letterbox on a wide
+   monitor. Capped so it cannot dominate an ultrawide. The phone layout above
+   is deliberately left alone. This has to come after the rule it overrides: a
+   media query adds no specificity, so earlier in the file it would lose. */
+@media (min-width:769px){
+  .concept-tile{height:auto;aspect-ratio:3/2;max-height:min(46vh,420px)}
+}
 .concept-tile:hover{filter:brightness(1.06)}
 .concept-tile .img-slot{position:absolute;inset:0}
 
