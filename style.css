@@ -70,16 +70,29 @@ h1,h2,h3{margin:0;font-size:inherit;font-weight:inherit}
 /* Sticky so Contact/About stay reachable from anywhere on a ~5500px page.
    Scrim + blur keeps the wordmark legible over full-bleed hero imagery. */
 .filter-defs{position:absolute;width:0;height:0;overflow:hidden}
-/* Glass strip. The scrim is lighter than a normal frosted bar (0.55 vs 0.82) so
-   there is actually something to see refracting through it; nav text contrast is
-   checked against the brightest imagery that passes underneath. */
-.nav{display:flex;flex-wrap:wrap;align-items:baseline;gap:12px 32px;padding:20px clamp(20px,4vw,56px);border-bottom:1px solid rgba(230,225,216,0.22);position:sticky;top:0;z-index:5;background:rgba(10,9,8,0.68);backdrop-filter:blur(14px) saturate(1.7);-webkit-backdrop-filter:blur(14px) saturate(1.7)}
-/* Refraction proper. Firefox has backdrop-filter but not SVG filters inside it,
-   so this is gated: everyone still gets the frosted bar above, and engines that
-   can do it get the displacement on top. */
-@supports (backdrop-filter: url("#nav-glass")){
-  .nav{backdrop-filter:saturate(1.7) url(#nav-glass) blur(3px);-webkit-backdrop-filter:saturate(1.7) url(#nav-glass) blur(3px)}
-}
+/* Glass strip. The bar itself is transparent and carries no filter: the effect is
+   built from stacked stages inside .nav-glass, each sampling the composited result
+   beneath it. The tint has to sit ON TOP of those stages rather than on .nav,
+   because a background on .nav paints behind its own children - the stages would
+   then be sampling near-black and there would be nothing to refract. */
+.nav{display:flex;flex-wrap:wrap;align-items:baseline;gap:12px 32px;padding:20px clamp(20px,4vw,56px);border-bottom:1px solid rgba(230,225,216,0.22);position:sticky;top:0;z-index:5;background:transparent}
+.nav-glass{position:absolute;inset:0;pointer-events:none}
+.nav-glass__stage,.nav-glass__edge{position:absolute;inset:0}
+/* What everyone gets before script.js runs, and what engines without SVG filters
+   in backdrop-filter keep permanently: today's plain frosted bar. The JS upgrades
+   this one stage to the measured filter chain and leaves it alone otherwise, so a
+   blocked or stale script degrades to the old look rather than to clear glass. */
+.nav-glass__base{backdrop-filter:blur(14px) saturate(1.7);-webkit-backdrop-filter:blur(14px) saturate(1.7)}
+/* 0.60, not the reference's 0.20. Measured against the brightest region of every
+   image that scrolls under the bar - s1002.jpg, relative luminance 0.942 after a
+   4px blur - cream nav text needs 0.60 to clear 4.5:1 (it lands at 4.61:1). The
+   reference value would give 1.4:1. The brief calls the tint adjustable and the
+   displacement fixed, so this is the parameter that gives. */
+.nav-glass__tint{position:absolute;inset:0;background:rgba(10,9,8,0.60)}
+/* The stages are positioned, so they would paint over static in-flow text. The
+   logo and links are already position:relative and come later in the DOM; this
+   covers the wrapper for the same reason. */
+.nav-links{position:relative}
 /* Specular edges: a bright lip along the top and a catch along the bottom, the
    two places light collects on a real pane. */
 .nav::before,.nav::after{content:"";position:absolute;left:0;right:0;height:1px;pointer-events:none}

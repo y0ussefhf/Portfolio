@@ -219,3 +219,147 @@ window.__revealsReady = true;
     setTimeout(giveUp, 1200);
   });
 })();
+
+
+// Glass for the nav strip -- ported from the supplied reference implementation.
+// See the comment above the filter defs in index.html for why the blue channel,
+// the pinned R and the repeated sRGB declarations are all deliberate.
+//
+// Displacement profile measured from the 3D render, 256 rows top to bottom.
+// 128 is no shift; shift in px = scale * (value/255 - 0.5). Bright at the top
+// pulls content up from below, dark at the bottom pulls it down from above.
+// Do not re-centre or normalise this array.
+(function () {
+  var DISP_MAP = [255,247,239,231,223,223,224,225,226,226,227,227,228,228,227,226,226,225,223,222,220,219,217,215,214,212,210,209,207,206,204,202,201,199,197,195,194,192,190,188,186,185,183,181,180,178,177,176,174,173,172,170,169,168,167,166,165,164,163,162,161,160,159,158,157,156,155,154,153,152,150,149,148,147,146,145,144,143,142,141,141,140,139,139,138,137,137,136,136,135,134,134,133,133,133,132,132,131,131,131,131,130,130,130,130,130,129,129,129,129,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,127,127,126,126,126,125,125,124,124,123,122,122,121,120,120,119,118,118,117,116,116,115,114,114,113,112,111,111,110,109,109,108,107,107,106,105,104,104,103,102,101,100,100,99,98,97,96,95,93,92,91,90,89,87,86,85,83,82,80,79,77,76,74,73,71,69,68,66,64,63,61,59,58,56,54,53,51,50,48,46,45,43,41,39,37,35,33,30,28,26,24,21,19,17,15,13,12,10,9,8,6,5,4,4,3,2,2,1,1];
+  var EDGE_LAYERS = 8;
+
+  var cfg = {
+    dispScaleAt64: 90,   // measured at a 64px bar; scaled to the real height below
+    baseBlur: 2,
+    edgeMax: 6,
+    edgeRegion: 41,      // percent of bar height, in from each edge
+    falloff: 3
+  };
+
+  var nav = document.querySelector(".nav");
+  var glass = nav && nav.querySelector(".nav-glass");
+  if (!glass) return;
+
+  // Firefox has backdrop-filter but not SVG filter references inside it, and the
+  // failure mode is silent: feDisplacementMap gets transparent black for its map
+  // and applies a uniform diagonal shove, which reads as a working effect with
+  // wrong values rather than as an error. Gate on the capability and leave those
+  // engines on the CSS frosted bar.
+  var canSvgBackdrop = !!(window.CSS && CSS.supports &&
+    (CSS.supports("backdrop-filter", 'url("#glassBase")') ||
+     CSS.supports("-webkit-backdrop-filter", 'url("#glassBase")')));
+  if (!canSvgBackdrop) return;
+
+  var stageDisp = document.getElementById("navGlassDisp");
+  var stageBase = document.getElementById("navGlassBase");
+  var edges = glass.querySelectorAll(".nav-glass__edge");
+  var dispImg = document.getElementById("glassDispImg");
+  var dispMapEl = document.getElementById("glassDispMap");
+  var baseBlurEl = document.getElementById("glassBaseBlur");
+  if (!stageDisp || !stageBase || !dispImg || edges.length !== EDGE_LAYERS) return;
+
+  // The map has to be a raster PNG. An SVG data URI does not load in feImage
+  // inside backdrop-filter. R is pinned to 128 (zero horizontal displacement) and
+  // the profile goes in B; G is unused by the filter.
+  function buildMapURI() {
+    var h = DISP_MAP.length, w = 8;
+    var cv = document.createElement("canvas");
+    cv.width = w; cv.height = h;
+    var ctx = cv.getContext("2d");
+    var img = ctx.createImageData(w, h);
+    for (var y = 0; y < h; y++) {
+      var v = Math.max(0, Math.min(255, DISP_MAP[y]));
+      for (var x = 0; x < w; x++) {
+        var o = (y * w + x) * 4;
+        img.data[o] = 128;
+        img.data[o + 1] = 255;
+        img.data[o + 2] = v;
+        img.data[o + 3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    return cv.toDataURL("image/png");
+  }
+
+  var mapURI = buildMapURI();   // depends only on the profile, so built once
+  var dispReady = false;
+
+  function targetRadius(d) {        // d: 0 at the outer edge, 1 at the cutoff
+    if (d >= 1 || d < 0) return 0;
+    return cfg.edgeMax * Math.pow(1 - d, cfg.falloff);
+  }
+
+  function layout() {
+    // The reference assumes a fixed 64px bar. This nav is 60px, and wraps to two
+    // rows near 100px below 480px, so the height is measured rather than assumed
+    // and the displacement scales with it -- the bevel is a proportion of the bar
+    // (41 percent each side), so a taller bar refracts proportionally harder.
+    var h = nav.getBoundingClientRect().height;
+    var w = window.innerWidth;
+    if (!h) return;
+
+    if (dispReady) {
+      dispImg.setAttribute("x", (-0.25 * w).toFixed(1));
+      dispImg.setAttribute("y", "0");
+      dispImg.setAttribute("width", (1.5 * w).toFixed(1));
+      dispImg.setAttribute("height", h.toFixed(1));
+      dispMapEl.setAttribute("scale", (cfg.dispScaleAt64 * h / 64).toFixed(2));
+    }
+
+    baseBlurEl.setAttribute("stdDeviation",
+      cfg.baseBlur.toFixed(2) + " " + cfg.baseBlur.toFixed(2));
+    stageBase.style.backdropFilter =
+      stageBase.style.webkitBackdropFilter = "url(#glassBase)";
+
+    // CSS has no variable-radius blur. Eight overlapping increments, sized by
+    // sum-of-squares so the accumulated radius tracks the target curve at every
+    // depth. The overlap is what removes the stepping, not the layer count.
+    for (var j = 1; j <= EDGE_LAYERS; j++) {
+      var tIn = (EDGE_LAYERS - j) / EDGE_LAYERS;
+      var tOut = (EDGE_LAYERS - j + 1) / EDGE_LAYERS;
+      var rIn = targetRadius(tIn), rOut = targetRadius(tOut);
+      var inc = Math.sqrt(Math.max(0, rIn * rIn - rOut * rOut));
+
+      var blurEl = document.getElementById("glassEdgeBlur" + (j - 1));
+      if (blurEl) blurEl.setAttribute("stdDeviation", inc.toFixed(3) + " 0");
+
+      var a = tIn * cfg.edgeRegion, b = tOut * cfg.edgeRegion;
+      if (b <= a) b = a + 0.01;
+      var mask = "linear-gradient(to bottom," +
+        "rgba(0,0,0,1) 0%," +
+        "rgba(0,0,0,1) " + a.toFixed(2) + "%," +
+        "rgba(0,0,0,0) " + b.toFixed(2) + "%," +
+        "rgba(0,0,0,0) " + (100 - b).toFixed(2) + "%," +
+        "rgba(0,0,0,1) " + (100 - a).toFixed(2) + "%," +
+        "rgba(0,0,0,1) 100%)";
+
+      var el = edges[j - 1];
+      el.style.webkitMaskImage = el.style.maskImage = mask;
+      el.style.backdropFilter =
+        el.style.webkitBackdropFilter = "url(#glassEdge" + (j - 1) + ")";
+      el.style.display = inc > 0.005 ? "block" : "none";
+    }
+  }
+
+  // Only switch the displacement stage on once the generated PNG has actually
+  // decoded. If it has not, the blur stages alone still read as glass, which is
+  // the fallback the brief asks for.
+  var probe = new Image();
+  probe.onload = function () {
+    dispReady = true;
+    dispImg.setAttribute("href", mapURI);
+    dispImg.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", mapURI);
+    layout();
+    stageDisp.style.backdropFilter =
+      stageDisp.style.webkitBackdropFilter = "url(#glassDisp)";
+  };
+  probe.src = mapURI;
+
+  window.addEventListener("resize", layout);
+  layout();
+})();

@@ -32,69 +32,81 @@ setTimeout(function () {
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<!-- Glass refraction for the nav: a symmetric cylindrical lens edge.
-     The displacement map is built from two ramps, never from noise.
-       V - vertical: 0 through the middle of the bar, rising to 1 at the top and
-           bottom rims. feFlood fills the filter region, so blurring it vertically
-           leaves a falloff at the region boundary; inverting that alpha puts the
-           strength at the edges. This is the profile of the reference ramp.
-       H - horizontal: one flood shifted half the bar's width and blurred, giving a
-           monotonic gradient whose neutral point sits on the centre line.
-     R = H*V - 0.5V + 0.5, so x-displacement is proportional to distance from the
-     bar's centre but scaled by the vertical edge ramp: content stretches along x at
-     the top and bottom rims and is untouched through the middle.
-     G is forced to a hard 0.5, so there is no vertical displacement at all.
+<!-- Glass for the nav strip, ported from the supplied reference implementation.
+     The displacement profile was measured frame by frame from a 3D render (rounded
+     edge, IOR 1.1), so the bevel widths and the top/bottom asymmetry are data, not
+     hand-approximation. The supplied brief (glass-navbar-brief.md, kept local
+     alongside PRODUCT.md) explains the rest; read it before touching any of it.
 
-     The H values are measured, not guessed. Rasterising this filter to a canvas and
-     reading the pixel row gives 255 -> 126 at 49.7% -> 0, with a mirror error of
-     2/255 about the centre. dx and stdDeviation were tuned against that readout:
-     wider blurs drift the neutral point and flatten the range.
+     Three stages stack bottom to top inside .nav-glass, each its own element with
+     its own backdrop-filter, sampling the composited result beneath it:
+       1 displacement  feImage + feDisplacementMap
+       2 base blur     isotropic, even across the bar
+       3 edge blur     horizontal only, radius ramping toward both edges
+     then a flat tint, then the nav content, which stays sharp.
 
-     primitiveUnits="objectBoundingBox" makes every length a fraction of the element,
-     so the ramp centres itself at any viewport width. With fixed pixel offsets the
-     neutral point slid off-centre on narrower screens and the bend became one-sided.
+     Four things here look like mistakes and are not:
+       - Y reads the BLUE channel, not green. The source normal map uses a swapped
+         axis order (R=X, G=Z, B=Y), so its flat area is (128,255,128). Reading G
+         would apply a constant full-scale shift, because G is 255 throughout.
+       - R is pinned to 128 when the map is built, which is zero horizontal shift.
+         Any sideways movement in the finished bar is a bug, never the effect.
+       - color-interpolation-filters="sRGB" is repeated on every primitive. On the
+         parent alone is not enough: feImage still decodes to linearRGB and the
+         gamma shift turns the smooth bevel into a hard step.
+       - The filter region is objectBoundingBox (percentages only) while feImage's
+         subregion is userSpaceOnUse (pixels). The attributes look identical.
 
-     Every intermediate is forced opaque before use. feColorMatrix un-premultiplies
-     before it applies, so any input with alpha below 1 silently corrupts the ramp.
-
-     Rejected: a two-ramp difference (L - R) for symmetry. Measured, it never crossed
-     neutral at all - the left half saturated at 255 - because blurring a flood also
-     produces falloff at the filter region's own edge, so each "ramp" is really a
-     bump. One ramp, measured, is both simpler and correct.
-
-     feImage would be the obvious way to supply the map, but it silently no-ops
-     inside backdrop-filter in Chrome, so the map is synthesised from primitives. -->
+     A previous comment here claimed feImage silently no-ops inside backdrop-filter
+     in Chrome. That is wrong, and the whole synthesised-ramp approach it justified
+     has been removed. What fails is an SVG data URI; a raster PNG built on a canvas
+     loads fine. Verified by A/B-ing this stage against stripe test content. -->
 <svg class="filter-defs" width="0" height="0" aria-hidden="true" focusable="false">
-  <filter id="nav-glass" x="0%" y="0%" width="100%" height="100%"
-          primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB">
-    <feFlood flood-color="#000000" flood-opacity="1" result="blk"/>
-    <feFlood flood-color="#ffffff" flood-opacity="1" result="wht"/>
-
-    <feGaussianBlur in="wht" stdDeviation="0 0.10" result="vsoft"/>
-    <feComponentTransfer in="vsoft" result="vinv">
-      <feFuncA type="table" tableValues="1 0"/>
-    </feComponentTransfer>
-    <feComposite in="vinv" in2="blk" operator="over" result="V"/>
-
-    <feOffset in="wht" dx="-0.5" result="hshift"/>
-    <feGaussianBlur in="hshift" stdDeviation="0.10 0" result="hsoft"/>
-    <feComposite in="hsoft" in2="blk" operator="over" result="H"/>
-
-    <feComposite in="H" in2="V" operator="arithmetic" k1="1" k2="0" k3="-0.5" k4="0.5" result="ramp"/>
-    <feColorMatrix in="ramp" type="matrix" result="map"
-      values="1 0 0 0 0
-              0 0 0 0 0.5
-              0 0 0 0 0
-              0 0 0 0 1"/>
-
-    <feDisplacementMap in="SourceGraphic" in2="map" scale="0.14" xChannelSelector="R" yChannelSelector="G"/>
+  <filter id="glassDisp" x="-25%" y="-100%" width="150%" height="300%"
+          filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse"
+          color-interpolation-filters="sRGB">
+    <feImage id="glassDispImg" result="dispMap" preserveAspectRatio="none"
+             color-interpolation-filters="sRGB"/>
+    <feDisplacementMap id="glassDispMap" in="SourceGraphic" in2="dispMap" scale="0"
+                       xChannelSelector="R" yChannelSelector="B"
+                       color-interpolation-filters="sRGB"/>
   </filter>
+
+  <filter id="glassBase" x="-25%" y="-25%" width="150%" height="150%"
+          color-interpolation-filters="sRGB">
+    <feGaussianBlur id="glassBaseBlur" in="SourceGraphic" stdDeviation="2 2"
+                    color-interpolation-filters="sRGB"/>
+  </filter>
+
+  <filter id="glassEdge0" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur id="glassEdgeBlur0" in="SourceGraphic" stdDeviation="0 0" color-interpolation-filters="sRGB"/></filter>
+  <filter id="glassEdge1" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur id="glassEdgeBlur1" in="SourceGraphic" stdDeviation="0 0" color-interpolation-filters="sRGB"/></filter>
+  <filter id="glassEdge2" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur id="glassEdgeBlur2" in="SourceGraphic" stdDeviation="0 0" color-interpolation-filters="sRGB"/></filter>
+  <filter id="glassEdge3" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur id="glassEdgeBlur3" in="SourceGraphic" stdDeviation="0 0" color-interpolation-filters="sRGB"/></filter>
+  <filter id="glassEdge4" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur id="glassEdgeBlur4" in="SourceGraphic" stdDeviation="0 0" color-interpolation-filters="sRGB"/></filter>
+  <filter id="glassEdge5" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur id="glassEdgeBlur5" in="SourceGraphic" stdDeviation="0 0" color-interpolation-filters="sRGB"/></filter>
+  <filter id="glassEdge6" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur id="glassEdgeBlur6" in="SourceGraphic" stdDeviation="0 0" color-interpolation-filters="sRGB"/></filter>
+  <filter id="glassEdge7" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur id="glassEdgeBlur7" in="SourceGraphic" stdDeviation="0 0" color-interpolation-filters="sRGB"/></filter>
 </svg>
 <a href="#work" class="skip-link">Skip to content</a>
 <div class="page">
   <div class="grain"></div>
 
   <nav class="nav">
+    <div class="nav-glass" aria-hidden="true">
+      <div class="nav-glass__stage" id="navGlassDisp"></div>
+      <div class="nav-glass__stage nav-glass__base" id="navGlassBase"></div>
+      <div class="nav-glass__stage" id="navGlassEdges">
+        <div class="nav-glass__edge"></div>
+        <div class="nav-glass__edge"></div>
+        <div class="nav-glass__edge"></div>
+        <div class="nav-glass__edge"></div>
+        <div class="nav-glass__edge"></div>
+        <div class="nav-glass__edge"></div>
+        <div class="nav-glass__edge"></div>
+        <div class="nav-glass__edge"></div>
+      </div>
+      <div class="nav-glass__tint"></div>
+    </div>
     <a href="#work" class="logo">YOUSSEF HESHAM</a>
     <span class="spacer"></span>
     <div class="nav-links">
