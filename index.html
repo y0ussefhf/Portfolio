@@ -32,61 +32,6 @@ setTimeout(function () {
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<!-- Glass for the nav strip, ported from the supplied reference implementation.
-     The displacement profile was measured frame by frame from a 3D render (rounded
-     edge, IOR 1.1), so the bevel widths and the top/bottom asymmetry are data, not
-     hand-approximation. The supplied brief (glass-navbar-brief.md, kept local
-     alongside PRODUCT.md) explains the rest; read it before touching any of it.
-
-     Three stages stack bottom to top inside .nav-glass, each its own element with
-     its own backdrop-filter, sampling the composited result beneath it:
-       1 displacement  feImage + feDisplacementMap
-       2 base blur     isotropic, even across the bar
-       3 edge blur     horizontal only, radius ramping toward both edges
-     then a flat tint, then the nav content, which stays sharp.
-
-     Four things here look like mistakes and are not:
-       - Y reads the BLUE channel, not green. The source normal map uses a swapped
-         axis order (R=X, G=Z, B=Y), so its flat area is (128,255,128). Reading G
-         would apply a constant full-scale shift, because G is 255 throughout.
-       - R is pinned to 128 when the map is built, which is zero horizontal shift.
-         Any sideways movement in the finished bar is a bug, never the effect.
-       - color-interpolation-filters="sRGB" is repeated on every primitive. On the
-         parent alone is not enough: feImage still decodes to linearRGB and the
-         gamma shift turns the smooth bevel into a hard step.
-       - The filter region is objectBoundingBox (percentages only) while feImage's
-         subregion is userSpaceOnUse (pixels). The attributes look identical.
-
-     A previous comment here claimed feImage silently no-ops inside backdrop-filter
-     in Chrome. That is wrong, and the whole synthesised-ramp approach it justified
-     has been removed. What fails is an SVG data URI; a raster PNG built on a canvas
-     loads fine. Verified by A/B-ing this stage against stripe test content. -->
-<svg class="filter-defs" width="0" height="0" aria-hidden="true" focusable="false">
-  <filter id="glassDisp" x="-25%" y="-100%" width="150%" height="300%"
-          filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB">
-    <feImage id="glassDispImg" result="dispMap" preserveAspectRatio="none"
-             color-interpolation-filters="sRGB"/>
-    <feDisplacementMap id="glassDispMap" in="SourceGraphic" in2="dispMap" scale="0"
-                       xChannelSelector="R" yChannelSelector="B"
-                       color-interpolation-filters="sRGB"/>
-  </filter>
-
-  <filter id="glassBase" x="-25%" y="-25%" width="150%" height="150%"
-          color-interpolation-filters="sRGB">
-    <feGaussianBlur id="glassBaseBlur" in="SourceGraphic" stdDeviation="2 2"
-                    color-interpolation-filters="sRGB"/>
-  </filter>
-
-  <filter id="glassEdge0" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur id="glassEdgeBlur0" in="SourceGraphic" stdDeviation="0 0" color-interpolation-filters="sRGB"/></filter>
-  <filter id="glassEdge1" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur id="glassEdgeBlur1" in="SourceGraphic" stdDeviation="0 0" color-interpolation-filters="sRGB"/></filter>
-  <filter id="glassEdge2" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur id="glassEdgeBlur2" in="SourceGraphic" stdDeviation="0 0" color-interpolation-filters="sRGB"/></filter>
-  <filter id="glassEdge3" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur id="glassEdgeBlur3" in="SourceGraphic" stdDeviation="0 0" color-interpolation-filters="sRGB"/></filter>
-  <filter id="glassEdge4" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur id="glassEdgeBlur4" in="SourceGraphic" stdDeviation="0 0" color-interpolation-filters="sRGB"/></filter>
-  <filter id="glassEdge5" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur id="glassEdgeBlur5" in="SourceGraphic" stdDeviation="0 0" color-interpolation-filters="sRGB"/></filter>
-  <filter id="glassEdge6" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur id="glassEdgeBlur6" in="SourceGraphic" stdDeviation="0 0" color-interpolation-filters="sRGB"/></filter>
-  <filter id="glassEdge7" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur id="glassEdgeBlur7" in="SourceGraphic" stdDeviation="0 0" color-interpolation-filters="sRGB"/></filter>
-</svg>
 <a href="#work" class="skip-link">Skip to content</a>
 <div class="page">
   <div class="grain"></div>
@@ -311,5 +256,6 @@ setTimeout(function () {
   </section>
 </div>
 <script src="script.js"></script>
+<script src="nav-glass.js"></script>
 </body>
 </html>
