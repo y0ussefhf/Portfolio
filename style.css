@@ -89,10 +89,14 @@ h1,h2,h3{margin:0;font-size:inherit;font-weight:inherit}
    reference value would give 1.4:1. The brief calls the tint adjustable and the
    displacement fixed, so this is the parameter that gives. */
 .nav-glass__tint{position:absolute;inset:0;background:rgba(10,9,8,0.60)}
-/* The stages are positioned, so they would paint over static in-flow text. The
-   logo and links are already position:relative and come later in the DOM; this
-   covers the wrapper for the same reason. */
-.nav-links{position:relative}
+/* The glass stages are absolutely positioned, so they paint above any static
+   in-flow content - which is the nav's own text. pointer-events:none hides this
+   from hit-testing, so the links still respond while the wordmark sits blurred
+   and displaced underneath; it has to be caught by eye, not by a click test.
+   Stating it here rather than relying on the tap-target rule further down, which
+   lifts .logo and the links for an unrelated reason and would take the nav with
+   it if anyone removed it. */
+.nav > :not(.nav-glass){position:relative}
 /* Specular edges: a bright lip along the top and a catch along the bottom, the
    two places light collects on a real pane. */
 .nav::before,.nav::after{content:"";position:absolute;left:0;right:0;height:1px;pointer-events:none}

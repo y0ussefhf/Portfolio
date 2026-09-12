@@ -59,6 +59,14 @@ html{scroll-behavior:smooth}
    logo would have passed at 0.60. Down from the old flat 0.82, which is the only
    slack the measurement allows. */
 .nav-glass__tint{position:absolute;inset:0;background:rgba(20,5,3,0.75)}
+/* The glass stages are absolutely positioned, so they paint above any static
+   in-flow content - which is the nav's own text. pointer-events:none hides this
+   from hit-testing, so the links still respond while the wordmark sits blurred
+   and displaced underneath; it has to be caught by eye, not by a click test.
+   Stating it here rather than relying on the tap-target rule further down, which
+   lifts .logo and the links for an unrelated reason and would take the nav with
+   it if anyone removed it. */
+.nav > :not(.nav-glass){position:relative}
 .logo{font-weight:900;font-size:15px;letter-spacing:0.14em;font-variation-settings:'wdth' 118}
 .spacer{flex:1}
 .back-link{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.14em;color:rgba(239,233,223,0.7)}
