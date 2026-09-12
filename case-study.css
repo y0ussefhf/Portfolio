@@ -7,8 +7,6 @@ a:hover{color:#FF7A1A}
 a:focus-visible{outline:2px solid #FF7A1A;outline-offset:3px;border-radius:2px}
 ::selection{background:#FF7A1A;color:#140503}
 *{box-sizing:border-box}
-/* Same GT-002 green as the homepage hero glow — this page IS GT-002. */
-:root{--gt002:132 214 70}
 h1,h2{margin:0;font-size:inherit;font-weight:inherit}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
@@ -118,9 +116,12 @@ html{scroll-behavior:smooth}
 .inversion-head{padding:clamp(48px,7vw,96px) clamp(20px,4vw,56px) 0}
 .inversion-title{font-weight:900;font-size:clamp(36px,5.5vw,84px);line-height:0.94;font-variation-settings:'wdth' 120;color:#ff6b5a;margin-top:20px;text-shadow:0 0 44px rgba(255,107,90,0.28);max-width:16ch}
 .inversion-grid{display:flex;flex-wrap:wrap;gap:2px;padding:clamp(32px,4vw,56px) clamp(20px,4vw,56px) clamp(48px,7vw,96px)}
+/* No tint over these two. They are the payoff of the whole piece - the real car,
+   real light, real dirt - and a green wash laid on top muted exactly the thing
+   the section is about. The green-black ground behind them carries the colour
+   instead. Same reasoning as the homepage: colour belongs around a render, not
+   on it. */
 .inversion-tile{flex:1 1 320px;height:380px;position:relative;overflow:hidden}
-.inversion-tile::after{content:"";position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(62% 54% at 50% 46%, rgb(var(--gt002) / 0.24) 0%, rgb(var(--gt002) / 0) 72%)}
 
 /* Credits */
 .credits{padding:clamp(48px,7vw,96px) clamp(20px,4vw,56px);display:flex;flex-wrap:wrap;gap:clamp(28px,5vw,80px);border-bottom:1px solid rgba(239,233,223,0.16)}
