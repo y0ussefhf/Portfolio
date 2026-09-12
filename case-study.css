@@ -46,7 +46,21 @@ html{scroll-behavior:smooth}
 }
 
 /* Nav — sticky, matching the homepage so wayfinding is consistent across pages */
-.nav{display:flex;flex-wrap:wrap;align-items:baseline;gap:12px 32px;padding:20px clamp(20px,4vw,56px);border-bottom:1px solid rgba(239,233,223,0.16);position:sticky;top:0;z-index:5;background:rgba(20,5,3,0.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.nav{display:flex;flex-wrap:wrap;align-items:baseline;gap:12px 32px;padding:20px clamp(20px,4vw,56px);border-bottom:1px solid rgba(239,233,223,0.16);position:sticky;top:0;z-index:5;background:transparent}
+/* Same glass as the homepage, driven by the shared nav-glass.js. The bar itself
+   carries no background or filter: the stages inside .nav-glass each sample the
+   composited result beneath them, and a background on .nav would paint behind its
+   own children, leaving them nothing to refract. */
+.nav-glass{position:absolute;inset:0;pointer-events:none}
+.nav-glass__stage,.nav-glass__edge{position:absolute;inset:0}
+/* Pre-JS and unsupported-engine fallback: the plain frosted bar this page had. */
+.nav-glass__base{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+/* 0.75, and the binding constraint is .back-link, not the logo. At 70% alpha over
+   the brightest thing on this page (gt002-tactility.jpg, relative luminance 0.903
+   after a 4px blur) it needs 0.75 to reach 4.5:1, landing at 4.96:1 - the solid
+   logo would have passed at 0.60. Down from the old flat 0.82, which is the only
+   slack the measurement allows. */
+.nav-glass__tint{position:absolute;inset:0;background:rgba(20,5,3,0.75)}
 .logo{font-weight:900;font-size:15px;letter-spacing:0.14em;font-variation-settings:'wdth' 118}
 .spacer{flex:1}
 .back-link{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.14em;color:rgba(239,233,223,0.7)}
