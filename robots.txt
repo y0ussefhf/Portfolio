@@ -1,0 +1,5 @@
+# Nothing here is private; the point is to be found.
+User-agent: *
+Allow: /
+
+Sitemap: https://www.youssefhf.art/sitemap.xml
