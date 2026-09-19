@@ -377,7 +377,6 @@ html{scroll-behavior:smooth}
 .experience-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:clamp(14px,3vw,28px);margin-bottom:clamp(22px,3vw,34px)}
 .experience-title{font-weight:700;font-size:13px;letter-spacing:0.14em;color:rgba(230,225,216,0.65)}
 /* 0.6 (5.86:1), not 0.5 — 0.5 computes to 4.34:1 and fails AA at 13px/400. */
-.experience-intro{margin:0;font-size:13px;color:rgba(230,225,216,0.6)}
 .creditlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
 .creditlist li{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px clamp(18px,3vw,40px);
   padding:13px 0;border-top:1px solid rgba(230,225,216,0.08)}
