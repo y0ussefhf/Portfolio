@@ -134,6 +134,7 @@ window.__revealsReady = true;
       });
     }, { rootMargin: "0px 0px -12% 0px", threshold: 0.08 });
 
+    var pending = [];
     els.forEach(function (el) {
       // If the failsafe already rescued this element inline, hand control back.
       el.style.opacity = "";
@@ -142,8 +143,28 @@ window.__revealsReady = true;
       // Anything already in view on load should not wait for a scroll.
       var r = el.getBoundingClientRect();
       if (r.top < window.innerHeight * 0.92) el.classList.add("is-in");
-      else io.observe(el);
+      else { io.observe(el); pending.push(el); }
     });
+
+    // The observer's trigger line sits 12% up from the bottom of the viewport,
+    // and the last things on the page can never reach it: on a tall viewport the
+    // contact links still sit below that line with the page scrolled as far as
+    // it goes, so they stayed at opacity 0 until a zoom changed the viewport
+    // height. Same failure the nav state hit for #contact (see initNavState).
+    // Resting against the end of the document, show whatever is on screen.
+    function revealAtEnd() {
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+      if (window.pageYOffset < max - 2) return;
+      pending.forEach(function (el) {
+        if (el.classList.contains("is-in")) return;
+        if (el.getBoundingClientRect().top >= window.innerHeight) return;
+        el.classList.add("is-in");
+        io.unobserve(el);
+      });
+    }
+    window.addEventListener("scroll", revealAtEnd, { passive: true });
+    window.addEventListener("resize", revealAtEnd);
+    window.addEventListener("load", revealAtEnd);
   }
   // If anything in here throws, un-hide rather than leaving content invisible.
   function safeInit() {
