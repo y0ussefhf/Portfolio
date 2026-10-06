@@ -56,6 +56,26 @@ function initNavState() {
   }
   var activeLink = null;
 
+  // The underline under the current link is a single bar drawn by
+  // .nav-links::after, positioned here, so a change of section slides it from
+  // one link to the next instead of one line vanishing and another appearing.
+  // Nothing current (the hero and intro) shrinks it away under WORK.
+  var bar = links[0].parentNode;
+  function placeBar(animate) {
+    if (!animate) bar.classList.add("nav-bar-still");
+    // With nothing current, keep it parked under the first link so that
+    // reaching WORK grows it in place rather than sliding in from the edge.
+    var under = activeLink || links[0];
+    var box = bar.getBoundingClientRect(), r = under.getBoundingClientRect();
+    bar.style.setProperty("--bar-x", (r.left - box.left) + "px");
+    bar.style.setProperty("--bar-w", r.width + "px");
+    bar.style.setProperty("--bar-s", activeLink ? "1" : "0");
+    if (!animate) {
+      bar.offsetWidth; // commit the new position before transitions come back
+      bar.classList.remove("nav-bar-still");
+    }
+  }
+
   function apply() {
     var y = window.pageYOffset;
     var max = document.documentElement.scrollHeight - window.innerHeight;
@@ -84,6 +104,7 @@ function initNavState() {
     if (activeLink) activeLink.removeAttribute("aria-current");
     if (link) link.setAttribute("aria-current", "true");
     activeLink = link;
+    placeBar(true);
   }
 
   // Called straight from the scroll event rather than deferred to
@@ -96,6 +117,14 @@ function initNavState() {
   window.addEventListener("resize", apply);
   window.addEventListener("load", apply);
   apply();
+  placeBar(false);
+  // Link widths change on resize and again when the webfont swaps in; re-place
+  // the bar without animating so it never slides just because the text resized.
+  window.addEventListener("resize", function () { placeBar(false); });
+  window.addEventListener("load", function () { placeBar(false); });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { placeBar(false); });
+  }
 }
 // Run now if the DOM is already parsed, otherwise wait. A bare
 // DOMContentLoaded listener silently no-ops when the script loads late
